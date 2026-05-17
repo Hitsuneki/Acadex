@@ -46,7 +46,71 @@
     <string name="description_hint">Description</string>
     <string name="uploader_name_hint">Your name</string>
     <string name="upload">Submit</string>
+    <string name="retry">Retry</string>
+    <string name="save">Save</string>
+    <string name="clear">Clear</string>
+    <string name="remove">Remove</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="display_name">Display name</string>
+    <string name="display_name_required">Display name is required</string>
+    <string name="section_year">Section / Year</string>
+    <string name="profile_updated">Profile updated.</string>
+    <string name="profile_update_failed">Failed to update profile. Please try again.</string>
+    <string name="title_hint_upload">Give this material a clear, descriptive title</string>
+    <string name="description_hint_upload">Add context — what exam does this cover, what chapters, any notes for other students.</string>
+    <string name="subject_hint">Subject</string>
+    <string name="title_required">Title is required</string>
+    <string name="subject_required">Subject is required</string>
+    <string name="tags_hint">e.g. finals, reviewer, chapter 5</string>
+    <string name="clear_file">Clear file</string>
+    <string name="card_action">Card action</string>
+    <string name="file_type_not_supported">File type not supported. Please upload a PDF, Word document, PowerPoint, image, or text file.</string>
+    <string name="upload_failed">Upload failed. Please check your connection and try again.</string>
+    <string name="upload_failed_network">Upload failed. Please check your connection and try again.</string>
+    <string name="upload_metadata_failed">File uploaded but metadata could not be saved. Please try again.</string>
+    <string name="upload_submitted">Submitted to the Acadex archive.</string>
+    <string name="empty_submissions">You haven\'t submitted anything yet. Head to Upload to contribute to the archive.</string>
+    <string name="empty_saved_index">Nothing saved yet. Tap the bookmark icon on any material to save it here.</string>
+    <string name="empty_quiz_history">No quizzes taken yet. Head to the Practice Index to get started.</string>
+    <string name="confirm_delete_submission">Remove this submission? This will permanently delete the file from the archive.</string>
+    <string name="submission_removed">Submission removed from the archive.</string>
+    <string name="removed_from_saved">Removed from Saved Index.</string>
+    <string name="quiz_history_score">%1$d / %2$d · %3$d%%</string>
+    <string name="section_appearance">Appearance</string>
+    <string name="section_notifications">Notifications</string>
+    <string name="section_archive">Archive</string>
+    <string name="section_account">Account</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="notif_new_uploads">New uploads</string>
+    <string name="notif_quiz_reminders">Quiz reminders</string>
+    <string name="clear_saved_index">Clear Saved Index</string>
+    <string name="clear_quiz_history">Clear Quiz History</string>
+    <string name="confirm_clear_saved">Clear your entire Saved Index? This cannot be undone.</string>
+    <string name="confirm_clear_quiz_history">Clear your entire quiz history? This cannot be undone.</string>
+    <string name="saved_index_cleared">Saved Index cleared.</string>
+    <string name="quiz_history_cleared">Quiz history cleared.</string>
+    <string name="clear_failed">Failed to clear. Please try again.</string>
+    <string name="about_version">Version 1.0.0 (Build 1)</string>
+    <string name="about_what_title">What is Acadex?</string>
+    <string name="about_what_body">Acadex is a student-built academic knowledge archive designed to make learning materials accessible, organized, and searchable for every student. Inspired by the gap in access to quality reviewers and study resources, Acadex lets students upload, share, and discover notes, PDFs, presentations, and practice quizzes — all organized by subject and indexed for easy retrieval.</string>
+    <string name="about_philosophy_title">Our Philosophy</string>
+    <string name="about_philosophy_body">\"Information becomes education when it is organized.\" Acadex is built on the belief that knowledge shared is knowledge multiplied. Every submission to the archive makes the next student\'s study session a little easier.</string>
+    <string name="about_can_do_title">What you can do</string>
+    <string name="about_can_do_body">Upload PDFs, Word documents, PowerPoint files, and images. Browse and search the full archive by subject. Save materials to your personal Saved Index. Take practice quizzes and track your history. Rate and comment on materials to help surface the best content. AI-powered summarization and quiz generation coming soon.</string>
+    <string name="about_coming_title">Coming Soon</string>
+    <string name="about_coming_body">Firebase cloud storage for persistent uploads across devices. In-app PDF and document viewer. AI Summarizer — instant summaries and auto-generated quizzes from uploaded files. Cross-device sync and user accounts with full history.</string>
+    <string name="about_built_title">Built by</string>
+    <string name="about_built_body">Acadex was created as a capstone project to demonstrate how structured academic tooling can close the resource gap among students. Developed with Kotlin on Android, backed by Firebase Authentication and Supabase.</string>
+    <string name="about_footer">© 2025 Acadex. All rights reserved. This is a student project and is not affiliated with any academic institution.</string>
     <string name="upload_success">Added to the Acadex archive.</string>
+    <string name="upload_success_cloud">Uploaded to cloud archive.</string>
+    <string name="upload_success_local_fallback">Saved locally (cloud upload failed).</string>
+    <string name="no_description">No description provided.</string>
+    <string name="file_stats_format">★ %1$.1f · %2$d downloads · %3$d comments</string>
+    <string name="shared_via_acadex">Shared via Acadex</string>
+    <string name="save_failed">Could not update saved index</string>
+    <string name="rating_failed">Could not submit rating</string>
+    <string name="comment_failed">Could not post comment</string>
     <string name="field_required">This field is required</string>
     <string name="select_file_required">Please select a file</string>
 
@@ -132,5 +196,50 @@
         <item>DOC</item>
         <item>Image</item>
         <item>Quiz</item>
+    </string-array>
+
+    <string-array name="subject_suggestions">
+        <item>Mathematics</item>
+        <item>Algebra</item>
+        <item>Calculus</item>
+        <item>Statistics</item>
+        <item>Trigonometry</item>
+        <item>Geometry</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+        <item>Earth Science</item>
+        <item>Environmental Science</item>
+        <item>English Language</item>
+        <item>Filipino</item>
+        <item>Araling Panlipunan</item>
+        <item>Philippine History</item>
+        <item>World History</item>
+        <item>Civics and Culture</item>
+        <item>Economics</item>
+        <item>Business Mathematics</item>
+        <item>Accounting</item>
+        <item>Computer Science</item>
+        <item>Programming</item>
+        <item>Information Technology</item>
+        <item>Physical Education</item>
+        <item>Health Education</item>
+        <item>Music</item>
+        <item>Arts</item>
+        <item>Values Education</item>
+        <item>Research Methods</item>
+        <item>Thesis Writing</item>
+        <item>General Education</item>
+        <item>Engineering Mathematics</item>
+        <item>Architecture</item>
+        <item>Medicine</item>
+        <item>Nursing</item>
+        <item>Law</item>
+        <item>Psychology</item>
+        <item>Sociology</item>
+        <item>Philosophy</item>
+        <item>Literature</item>
+        <item>Rhetoric</item>
+        <item>Other</item>
     </string-array>
 </resources>

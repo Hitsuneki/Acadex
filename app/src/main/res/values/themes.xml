@@ -53,6 +53,37 @@
         <item name="android:drawableEnd">@drawable/ic_chevron_right</item>
     </style>
 
+    <style name="Widget.Acadex.SettingsSection" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">@color/accent_blue</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="Widget.Acadex.SettingsRow" parent="@android:style/Widget.CompoundButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="Widget.Acadex.AboutHeading" parent="TextAppearance.Acadex.Headline">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+    <style name="Widget.Acadex.AboutBody" parent="TextAppearance.Acadex.Body">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
     <style name="Widget.Acadex.Card" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">6dp</item>
         <item name="cardElevation">0dp</item>

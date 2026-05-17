@@ -8,8 +8,11 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.acadex.databinding.ActivityMainBinding
+import androidx.lifecycle.lifecycleScope
+import com.example.acadex.data.repository.ProfileRepository
 import com.example.acadex.util.AuthSession
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,8 +31,11 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigation.visibility = View.GONE
         } else {
             AuthSession.syncProfileFromFirebase()
-            navigateToHomeIfNeeded()
-            updateBottomNavVisibility()
+            lifecycleScope.launch {
+                ProfileRepository.ensureProfileExists()
+                navigateToHomeIfNeeded()
+                updateBottomNavVisibility()
+            }
         }
     }
 
@@ -48,7 +54,10 @@ class MainActivity : AppCompatActivity() {
 
         if (FirebaseAuth.getInstance().currentUser != null) {
             AuthSession.syncProfileFromFirebase()
-            navigateToHomeIfNeeded()
+            lifecycleScope.launch {
+                ProfileRepository.ensureProfileExists()
+                navigateToHomeIfNeeded()
+            }
         }
     }
 

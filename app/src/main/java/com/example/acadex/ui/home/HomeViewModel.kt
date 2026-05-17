@@ -3,8 +3,10 @@ package com.example.acadex.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.acadex.data.MockDataSource
+import androidx.lifecycle.viewModelScope
+import com.example.acadex.data.ResourceRepository
 import com.example.acadex.data.model.ResourceFile
+import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
     private val _files = MutableLiveData<List<ResourceFile>>()
@@ -19,7 +21,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun refresh() {
-        _files.value = if (subject == "All") MockDataSource.files
-        else MockDataSource.files.filter { it.subject == subject }
+        viewModelScope.launch {
+            ResourceRepository.refreshFromSupabase()
+            val all = ResourceRepository.getAllFiles()
+            _files.postValue(
+                if (subject == "All") all else all.filter { it.subject == subject }
+            )
+        }
     }
 }

@@ -8,9 +8,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.acadex.ui.auth.LoginFragment"
         android:label="@string/sign_in">
-        <action
-            android:id="@+id/action_login_to_register"
-            app:destination="@id/registerFragment" />
+        <action android:id="@+id/action_login_to_register" app:destination="@id/registerFragment" />
         <action
             android:id="@+id/action_login_to_home"
             app:destination="@id/homeFragment"
@@ -61,14 +59,55 @@
         android:id="@+id/profileFragment"
         android:name="com.example.acadex.ui.profile.ProfileFragment"
         android:label="@string/nav_profile">
-        <action android:id="@+id/action_profile_to_fileDetail" app:destination="@id/fileDetailFragment" />
+        <action android:id="@+id/action_profile_to_editProfile" app:destination="@id/editProfileFragment" />
+        <action android:id="@+id/action_profile_to_mySubmissions" app:destination="@id/mySubmissionsFragment" />
+        <action android:id="@+id/action_profile_to_savedIndex" app:destination="@id/savedIndexFragment" />
+        <action android:id="@+id/action_profile_to_quizHistory" app:destination="@id/quizHistoryFragment" />
+        <action android:id="@+id/action_profile_to_settings" app:destination="@id/settingsFragment" />
+        <action android:id="@+id/action_profile_to_about" app:destination="@id/aboutFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/mySubmissionsFragment"
+        android:name="com.example.acadex.ui.profile.MySubmissionsFragment"
+        android:label="@string/row_my_submissions">
+        <action android:id="@+id/action_mySubmissions_to_fileDetail" app:destination="@id/fileDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedIndexFragment"
+        android:name="com.example.acadex.ui.profile.SavedIndexFragment"
+        android:label="@string/row_saved_index">
+        <action android:id="@+id/action_savedIndex_to_fileDetail" app:destination="@id/fileDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/quizHistoryFragment"
+        android:name="com.example.acadex.ui.profile.QuizHistoryFragment"
+        android:label="@string/row_quiz_history" />
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.example.acadex.ui.profile.EditProfileFragment"
+        android:label="@string/edit_profile" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.acadex.ui.profile.SettingsFragment"
+        android:label="@string/row_settings">
+        <action android:id="@+id/action_settings_to_editProfile" app:destination="@id/editProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.acadex.ui.profile.AboutFragment"
+        android:label="@string/row_about" />
 
     <fragment
         android:id="@+id/fileDetailFragment"
         android:name="com.example.acadex.ui.detail.FileDetailFragment"
         android:label="Detail">
-        <argument android:name="fileId" app:argType="integer" />
+        <argument android:name="materialId" app:argType="string" />
     </fragment>
 
     <fragment

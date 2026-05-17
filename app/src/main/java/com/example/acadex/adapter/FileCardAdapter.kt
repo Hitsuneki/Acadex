@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,8 +13,12 @@ import com.example.acadex.data.model.ResourceFile
 import com.example.acadex.databinding.ItemFileCardBinding
 import com.example.acadex.util.FileTypeUtils
 
+enum class FileCardAction { NONE, DELETE, BOOKMARK_FILLED, BOOKMARK_OUTLINE }
+
 class FileCardAdapter(
-    private val onItemClick: (ResourceFile) -> Unit
+    private val onItemClick: (ResourceFile) -> Unit,
+    private val action: FileCardAction = FileCardAction.NONE,
+    private val onActionClick: ((ResourceFile) -> Unit)? = null
 ) : ListAdapter<ResourceFile, FileCardAdapter.VH>(Diff()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -39,6 +44,22 @@ class FileCardAdapter(
             b.typePill.setTextColor(fg)
             b.typePill.setBackgroundColor(bg)
 
+            when (action) {
+                FileCardAction.NONE -> b.btnCardAction.isVisible = false
+                FileCardAction.DELETE -> {
+                    b.btnCardAction.isVisible = true
+                    b.btnCardAction.setImageResource(android.R.drawable.ic_menu_delete)
+                }
+                FileCardAction.BOOKMARK_FILLED -> {
+                    b.btnCardAction.isVisible = true
+                    b.btnCardAction.setImageResource(android.R.drawable.btn_star_big_on)
+                }
+                FileCardAction.BOOKMARK_OUTLINE -> {
+                    b.btnCardAction.isVisible = true
+                    b.btnCardAction.setImageResource(android.R.drawable.btn_star_big_off)
+                }
+            }
+            b.btnCardAction.setOnClickListener { onActionClick?.invoke(file) }
             b.root.setOnClickListener { onItemClick(file) }
         }
     }

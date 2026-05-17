@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.acadex.R
 import com.example.acadex.adapter.FileCardAdapter
 import com.example.acadex.data.MockDataSource
+import com.example.acadex.data.ResourceRepository
 import com.example.acadex.databinding.FragmentHomeBinding
 import com.example.acadex.util.SubjectChipHelper
 import com.google.android.material.snackbar.Snackbar
@@ -33,7 +34,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         chips = SubjectChipHelper(binding.subjectChipsRecycler) { viewModel.setSubject(it) }
         chips.setup()
-        adapter = FileCardAdapter { findNavController().navigate(HomeFragmentDirections.actionHomeToFileDetail(it.id)) }
+        adapter = FileCardAdapter(onItemClick = { file ->
+            findNavController().navigate(HomeFragmentDirections.actionHomeToFileDetail(materialId = file.id))
+        })
         binding.filesRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.filesRecycler.adapter = adapter
         viewModel.files.observe(viewLifecycleOwner) { adapter.submitList(it) }
@@ -64,7 +67,7 @@ class HomeFragment : Fragment() {
             else -> getString(R.string.greeting_evening, name)
         }
         binding.greetingText.text = greet
-        binding.statMaterials.text = MockDataSource.files.size.toString()
+        binding.statMaterials.text = ResourceRepository.getAllFiles().size.toString()
         binding.statSubjects.text = (MockDataSource.subjects.size - 1).toString()
         binding.statQuizzes.text = MockDataSource.quizSets.size.toString()
         binding.quizSetsSubtitle.text = getString(R.string.quiz_sets_available, MockDataSource.quizSets.size)

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/navy_primary"
+            app:navigationIcon="@drawable/ic_back_white"
+            app:title="@string/row_settings"
+            app:titleTextColor="@color/text_on_navy" />
+
+        <TextView style="@style/Widget.Acadex.SettingsSection" android:text="@string/section_appearance" />
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchDarkMode"
+            style="@style/Widget.Acadex.SettingsRow"
+            android:text="@string/dark_mode" />
+
+        <TextView style="@style/Widget.Acadex.SettingsSection" android:text="@string/section_notifications" />
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchNotifUploads"
+            style="@style/Widget.Acadex.SettingsRow"
+            android:text="@string/notif_new_uploads" />
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchNotifQuizzes"
+            style="@style/Widget.Acadex.SettingsRow"
+            android:text="@string/notif_quiz_reminders" />
+
+        <TextView style="@style/Widget.Acadex.SettingsSection" android:text="@string/section_archive" />
+        <TextView
+            android:id="@+id/rowClearSaved"
+            style="@style/Widget.Acadex.ProfileRow"
+            android:text="@string/clear_saved_index" />
+        <TextView
+            android:id="@+id/rowClearQuizHistory"
+            style="@style/Widget.Acadex.ProfileRow"
+            android:text="@string/clear_quiz_history" />
+
+        <TextView style="@style/Widget.Acadex.SettingsSection" android:text="@string/section_account" />
+        <TextView
+            android:id="@+id/rowAccountName"
+            style="@style/Widget.Acadex.ProfileRow"
+            android:text="@string/display_name" />
+        <TextView
+            android:id="@+id/rowAccountSection"
+            style="@style/Widget.Acadex.ProfileRow"
+            android:text="@string/section_year" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

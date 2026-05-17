@@ -59,11 +59,11 @@ class BrowseFragment : Fragment() {
             viewModel.setSort(sort)
         }
 
-        fileAdapter = FileCardAdapter { file ->
+        fileAdapter = FileCardAdapter(onItemClick = { file ->
             findNavController().navigate(
-                BrowseFragmentDirections.actionBrowseToFileDetail(fileId = file.id)
+                BrowseFragmentDirections.actionBrowseToFileDetail(materialId = file.id)
             )
-        }
+        })
         binding.filesRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.filesRecycler.adapter = fileAdapter
 
