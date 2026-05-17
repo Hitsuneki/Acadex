@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_screen"
+    android:background="@color/bg_white"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/header_background"
+        android:background="@color/navy_primary"
         app:title="@string/nav_browse"
         app:titleTextColor="@color/text_primary" />
 
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        app:boxBackgroundColor="@color/surface_card"
+        app:boxBackgroundColor="@color/bg_surface"
         app:startIconDrawable="@android:drawable/ic_menu_search">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -50,7 +50,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="8dp"
         android:hint="Sort by"
-        app:boxBackgroundColor="@color/surface_card">
+        app:boxBackgroundColor="@color/bg_surface">
 
         <AutoCompleteTextView
             android:id="@+id/sortDropdown"

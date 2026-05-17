@@ -1,165 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_screen"
-    android:orientation="vertical">
+    android:background="@color/bg_white"
+    android:paddingBottom="88dp">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/header_background"
-        app:title="@string/profile_title"
-        app:titleTextColor="@color/text_primary" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/navy_primary"
+            app:title="@string/profile_title"
+            app:titleTextColor="@color/text_on_navy" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:paddingBottom="88dp">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="12dp"
-                app:strokeColor="@color/card_border"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxBackgroundColor="@color/surface_card"
-                        app:hintTextColor="@color/text_secondary">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/nameEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/your_name"
-                            android:inputType="textPersonName"
-                            android:maxLines="1"
-                            android:textColor="@color/text_primary" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSaveName"
-                        style="@style/Widget.ClassHub.Button.Primary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/save_name" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="12dp"
-                app:strokeColor="@color/card_border"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/appearance"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/choose_theme"
-                        android:textColor="@color/text_secondary" />
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/themeToggleGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnThemeLight"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/theme_light"
-                            android:textColor="@color/text_primary" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnThemeDark"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/theme_dark"
-                            android:textColor="@color/text_primary" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnThemeSystem"
-                            style="@style/Widget.Material3.Button.OutlinedButton"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/theme_system"
-                            android:textColor="@color/text_primary" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            android:padding="20dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:text="@string/saved_materials"
-                android:textAppearance="@style/TextAppearance.ClassHub.SectionTitle" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/savedRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_file_card" />
-
-            <TextView
-                android:id="@+id/emptySaved"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:id="@+id/avatarInitials"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_avatar"
                 android:gravity="center"
-                android:padding="24dp"
-                android:text="@string/no_saved_materials"
-                android:textColor="@color/text_secondary"
-                android:visibility="gone" />
+                android:textColor="@color/text_on_navy"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="ST" />
+
+            <TextView
+                android:id="@+id/profileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAppearance="@style/TextAppearance.Acadex.Headline"
+                tools:text="Student" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/student_tag"
+                android:textAppearance="@style/TextAppearance.Acadex.Body" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
+                <TextView android:id="@+id/statUploads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="2" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_uploads" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginHorizontal="6dp" android:gravity="center" android:orientation="vertical" android:padding="10dp">
+                <TextView android:id="@+id/statDownloads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="372" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_profile_downloads" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
+                <TextView android:id="@+id/statAvgRating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="4.4" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_avg_rating" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:cardCornerRadius="6dp"
+            app:strokeColor="@color/border_light"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/nameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/your_name" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSaveName"
+                    style="@style/Widget.Acadex.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/save_name" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView android:id="@+id/rowSubmissions" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_my_submissions" />
+        <TextView android:id="@+id/rowSaved" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_saved_index" />
+        <TextView android:id="@+id/rowQuizHistory" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_quiz_history" />
+        <TextView android:id="@+id/rowRatings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_ratings_comments" />
+        <TextView android:id="@+id/rowSettings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_settings" />
+        <TextView android:id="@+id/rowAbout" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_about" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

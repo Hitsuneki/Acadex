@@ -1,84 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <fragment
-        android:id="@+id/homeFragment"
-        android:name="com.example.classhub.ui.home.HomeFragment"
-        android:label="@string/nav_home"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_home_to_fileDetail"
-            app:destination="@id/fileDetailFragment" />
-        <action
-            android:id="@+id/action_home_to_browse"
-            app:destination="@id/browseFragment" />
-        <action
-            android:id="@+id/action_home_to_quiz"
-            app:destination="@id/quizFragment" />
+    <fragment android:id="@+id/homeFragment"
+        android:name="com.example.acadex.ui.home.HomeFragment"
+        android:label="@string/nav_home">
+        <action android:id="@+id/action_home_to_fileDetail" app:destination="@id/fileDetailFragment" />
+        <action android:id="@+id/action_home_to_browse" app:destination="@id/browseFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/browseFragment"
-        android:name="com.example.classhub.ui.browse.BrowseFragment"
-        android:label="@string/nav_browse"
-        tools:layout="@layout/fragment_browse">
-        <argument
-            android:name="focusSearch"
-            android:defaultValue="false"
-            app:argType="boolean" />
-        <action
-            android:id="@+id/action_browse_to_fileDetail"
-            app:destination="@id/fileDetailFragment" />
+    <fragment android:id="@+id/browseFragment"
+        android:name="com.example.acadex.ui.browse.BrowseFragment"
+        android:label="@string/nav_browse">
+        <argument android:name="focusSearch" app:argType="boolean" android:defaultValue="false" />
+        <action android:id="@+id/action_browse_to_fileDetail" app:destination="@id/fileDetailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/uploadFragment"
-        android:name="com.example.classhub.ui.upload.UploadFragment"
-        android:label="@string/nav_upload"
-        tools:layout="@layout/fragment_upload" />
+    <fragment android:id="@+id/uploadFragment"
+        android:name="com.example.acadex.ui.upload.UploadFragment"
+        android:label="@string/nav_upload" />
 
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.example.classhub.ui.profile.ProfileFragment"
-        android:label="@string/nav_profile"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_profile_to_fileDetail"
-            app:destination="@id/fileDetailFragment" />
+    <fragment android:id="@+id/quizFragment"
+        android:name="com.example.acadex.ui.quiz.QuizFragment"
+        android:label="@string/practice_index">
+        <action android:id="@+id/action_quiz_to_quizTaking" app:destination="@id/quizTakingFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/fileDetailFragment"
-        android:name="com.example.classhub.ui.detail.FileDetailFragment"
-        android:label="File Detail"
-        tools:layout="@layout/fragment_file_detail">
-        <argument
-            android:name="fileId"
-            app:argType="integer" />
+    <fragment android:id="@+id/profileFragment"
+        android:name="com.example.acadex.ui.profile.ProfileFragment"
+        android:label="@string/nav_profile">
+        <action android:id="@+id/action_profile_to_fileDetail" app:destination="@id/fileDetailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/quizFragment"
-        android:name="com.example.classhub.ui.quiz.QuizFragment"
-        android:label="@string/practice_quizzes"
-        tools:layout="@layout/fragment_quiz">
-        <action
-            android:id="@+id/action_quiz_to_quizTaking"
-            app:destination="@id/quizTakingFragment" />
+    <fragment android:id="@+id/fileDetailFragment"
+        android:name="com.example.acadex.ui.detail.FileDetailFragment"
+        android:label="Detail">
+        <argument android:name="fileId" app:argType="integer" />
     </fragment>
 
-    <fragment
-        android:id="@+id/quizTakingFragment"
-        android:name="com.example.classhub.ui.quiz.QuizTakingFragment"
-        android:label="Quiz"
-        tools:layout="@layout/fragment_quiz_taking">
-        <argument
-            android:name="quizId"
-            app:argType="integer" />
+    <fragment android:id="@+id/quizTakingFragment"
+        android:name="com.example.acadex.ui.quiz.QuizTakingFragment"
+        android:label="Quiz">
+        <argument android:name="quizId" app:argType="integer" />
     </fragment>
-
 </navigation>

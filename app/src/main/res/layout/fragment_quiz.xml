@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_screen"
+    android:background="@color/bg_white"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/header_background"
+        android:background="@color/navy_primary"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/text_primary"
         app:title="@string/practice_quizzes"

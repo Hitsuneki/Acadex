@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-    <!-- Brand -->
-    <color name="primary_navy">#1A2744</color>
+    <color name="navy_primary">#0F172A</color>
+    <color name="graphite">#374151</color>
+    <color name="bg_white">#FFFFFF</color>
+    <color name="bg_surface">#F8FAFC</color>
     <color name="accent_blue">#2563EB</color>
-
-    <!-- Semantic — light theme -->
-    <color name="background_screen">#F1F5F9</color>
-    <color name="surface_card">#FFFFFF</color>
-    <color name="surface_card_alt">#FFFFFF</color>
-    <color name="surface_welcome">#1A2744</color>
-    <color name="surface_stat_tile">#33FFFFFF</color>
-    <color name="header_background">#F8FAFC</color>
-    <color name="card_border">#E2E8F0</color>
+    <color name="accent_cyan">#06B6D4</color>
+    <color name="border_light">#E2E8F0</color>
     <color name="text_primary">#0F172A</color>
-    <color name="text_secondary">#475569</color>
-    <color name="text_on_welcome">#FFFFFF</color>
-    <color name="text_on_welcome_secondary">#CBD5E1</color>
-    <color name="text_on_primary">#FFFFFF</color>
-    <color name="chip_unselected_bg">#FFFFFF</color>
-    <color name="chip_stroke">#94A3B8</color>
-    <color name="bottom_nav_surface">#FFFFFF</color>
-    <color name="icon_placeholder">#E2E8F0</color>
-    <color name="quiz_card_surface">#FFFFFF</color>
+    <color name="text_secondary">#374151</color>
+    <color name="text_muted">#94A3B8</color>
+    <color name="text_on_navy">#FFFFFF</color>
+    <color name="star_amber">#F59E0B</color>
+    <color name="white">#FFFFFF</color>
 
-    <!-- Legacy aliases -->
-    <color name="background_light">@color/background_screen</color>
+    <color name="type_pdf_bg">#FEF2F2</color>
+    <color name="type_pdf_fg">#DC2626</color>
+    <color name="type_doc_bg">#EFF6FF</color>
+    <color name="type_doc_fg">#2563EB</color>
+    <color name="type_img_bg">#F0FDF4</color>
+    <color name="type_img_fg">#16A34A</color>
+    <color name="type_quiz_bg">#F5F3FF</color>
+    <color name="type_quiz_fg">#7C3AED</color>
 
-    <!-- File types (readable on both themes) -->
-    <color name="pdf_text">#DC2626</color>
-    <color name="pdf_bg">#FEF2F2</color>
-    <color name="doc_text">#2563EB</color>
-    <color name="doc_bg">#EFF6FF</color>
-    <color name="image_text">#16A34A</color>
-    <color name="image_bg">#F0FDF4</color>
-    <color name="quiz_text">#7C3AED</color>
-    <color name="quiz_bg">#F5F3FF</color>
-
-    <color name="star_gold">#D97706</color>
+    <color name="ai_strip_bg">#ECFEFF</color>
+    <color name="ai_strip_border">#A5F3FC</color>
+    <color name="saved_highlight">#EFF6FF</color>
+    <color name="choice_selected_border">#2563EB</color>
+    <color name="difficulty_easy_bg">#DCFCE7</color>
+    <color name="difficulty_easy_fg">#16A34A</color>
+    <color name="difficulty_medium_bg">#FEF3C7</color>
+    <color name="difficulty_medium_fg">#D97706</color>
+    <color name="difficulty_hard_bg">#FEE2E2</color>
+    <color name="difficulty_hard_fg">#DC2626</color>
     <color name="error_red">#DC2626</color>
-    <color name="success_green">#16A34A</color>
-    <color name="wrong_red">#FEE2E2</color>
+    <color name="card_border">@color/border_light</color>
+    <color name="bg_surface_alt">@color/bg_surface</color>
+    <color name="icon_placeholder">@color/border_light</color>
+    <color name="surface_stat_tile">@color/bg_surface</color>
+    <color name="chip_stroke">@color/border_light</color>
+    <color name="surface_welcome">@color/bg_surface</color>
+    <color name="bottom_nav_surface">@color/bg_white</color>
     <color name="correct_green">#DCFCE7</color>
+    <color name="wrong_red">#FEE2E2</color>
 </resources>

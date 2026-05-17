@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "891701525126",
+    "firebase_url": "https://acadex-6203f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "acadex-6203f",
+    "storage_bucket": "acadex-6203f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891701525126:android:97427ef26299c9e424af07",
+        "android_client_info": {
+          "package_name": "com.example.acadex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "891701525126-f77naps14m8ms0g86g3pbr6sltnek2ji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWZHNnzfqbpovNFjTsjtw71PGlD7NbzuY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "891701525126-f77naps14m8ms0g86g3pbr6sltnek2ji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
