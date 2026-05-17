@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClassHub</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_browse">Browse</string>
+    <string name="nav_upload">Upload</string>
+    <string name="nav_profile">Profile</string>
+
+    <string name="recently_uploaded">Recently Uploaded</string>
+    <string name="see_all">See all</string>
+    <string name="welcome_subtitle">Access and share learning materials with your classmates.</string>
+    <string name="welcome_back">Welcome back, %1$s 👋</string>
+    <string name="stat_materials">Materials</string>
+    <string name="stat_subjects">Subjects</string>
+    <string name="stat_quizzes">Quizzes</string>
+    <string name="quiz_card_title">Test yourself with quizzes</string>
+    <string name="quiz_sets_available">%1$d quiz sets available</string>
+    <string name="theme">Theme</string>
+    <string name="appearance">Appearance</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_applied">Theme updated</string>
+    <string name="choose_theme">Choose theme</string>
+    <string name="practice_quizzes">Practice Quizzes</string>
+    <string name="start_quiz">Start Quiz</string>
+    <string name="search_hint">Search materials…</string>
+    <string name="no_materials_found">No materials found. Try a different search.</string>
+    <string name="sort_newest">Newest</string>
+    <string name="sort_most_downloaded">Most Downloaded</string>
+    <string name="sort_highest_rated">Highest Rated</string>
+
+    <string name="tap_to_select_file">Tap to select a file</string>
+    <string name="no_file_selected">No file selected</string>
+    <string name="title_hint">Title</string>
+    <string name="description_hint">Description (optional)</string>
+    <string name="uploader_name_hint">Your name</string>
+    <string name="upload">Upload</string>
+    <string name="upload_success">File uploaded successfully!</string>
+    <string name="field_required">This field is required</string>
+    <string name="select_file_required">Please select a file</string>
+
+    <string name="download_started">Download started</string>
+    <string name="preview_coming_soon">PDF Preview coming soon</string>
+    <string name="save_to_collection">Save to Collection</string>
+    <string name="saved">Saved</string>
+    <string name="share">Share</string>
+    <string name="download">Download</string>
+    <string name="preview">Preview</string>
+    <string name="ratings">Ratings</string>
+    <string name="submit_rating">Submit Rating</string>
+    <string name="rating_submitted">Rating submitted!</string>
+    <string name="comments">Comments</string>
+    <string name="post_comment">Post Comment</string>
+    <string name="comment_hint">Write a comment…</string>
+    <string name="ratings_count_format">★ %1$.1f · %2$d ratings</string>
+
+    <string name="profile_title">Profile</string>
+    <string name="your_name">Your name</string>
+    <string name="save_name">Save Name</string>
+    <string name="name_saved">Name saved!</string>
+    <string name="saved_materials">Saved Materials</string>
+    <string name="no_saved_materials">No saved materials yet</string>
+
+    <string name="question_progress">Question %1$d of %2$d</string>
+    <string name="next">Next</string>
+    <string name="finish">Finish</string>
+    <string name="score_format">You got %1$d/%2$d correct</string>
+    <string name="try_again">Try Again</string>
+    <string name="review_answers">Review Answers</string>
+    <string name="back_to_quizzes">Back to Quizzes</string>
+    <string name="questions_count">%1$d questions</string>
+
+    <string name="subject_all">All</string>
+    <string-array name="subjects">
+        <item>Math</item>
+        <item>Science</item>
+        <item>English</item>
+        <item>History</item>
+        <item>Filipino</item>
+        <item>PE</item>
+        <item>Computer Science</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="file_types">
+        <item>PDF</item>
+        <item>Document</item>
+        <item>Image</item>
+        <item>Quiz</item>
+    </string-array>
+    <string-array name="sort_options">
+        <item>@string/sort_newest</item>
+        <item>@string/sort_most_downloaded</item>
+        <item>@string/sort_highest_rated</item>
+    </string-array>
+</resources>
