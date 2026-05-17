@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.acadex.R
 import com.example.acadex.adapters.QuizSetAdapter
-import com.example.acadex.data.MockDataSource
 import com.example.acadex.databinding.FragmentQuizBinding
 import com.example.acadex.util.SubjectChipHelper
 
@@ -17,10 +18,12 @@ class QuizFragment : Fragment() {
 
     private var _binding: FragmentQuizBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: QuizViewModel by viewModels()
 
     private lateinit var quizAdapter: QuizSetAdapter
     private lateinit var chipHelper: SubjectChipHelper
     private var selectedSubject = "All"
+    private var allQuizzes = emptyList<com.example.acadex.data.model.QuizSet>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,14 +54,24 @@ class QuizFragment : Fragment() {
         binding.quizRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.quizRecycler.adapter = quizAdapter
 
-        refreshList()
+        viewModel.quizzes.observe(viewLifecycleOwner) { list ->
+            allQuizzes = list
+            val subjects = list.map { it.subject }.filter { it.isNotBlank() }.distinct().sorted()
+            chipHelper.updateSubjects(if (subjects.isEmpty()) listOf("All") else listOf("All") + subjects)
+            refreshList()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.load()
     }
 
     private fun refreshList() {
         val quizzes = if (selectedSubject == "All") {
-            MockDataSource.quizSets
+            allQuizzes
         } else {
-            MockDataSource.quizSets.filter { it.subject == selectedSubject }
+            allQuizzes.filter { it.subject == selectedSubject }
         }
         quizAdapter.submitList(quizzes)
     }

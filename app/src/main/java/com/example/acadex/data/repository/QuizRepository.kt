@@ -1,11 +1,15 @@
 package com.example.acadex.data.repository
 
 import android.util.Log
+import com.example.acadex.data.model.Difficulty
 import com.example.acadex.data.model.QuizHistoryEntry
+import com.example.acadex.data.model.QuizQuestion
+import com.example.acadex.data.model.QuizSet
 import com.example.acadex.data.result.RepoResult
 import com.example.acadex.data.result.userMessage
 import com.example.acadex.data.supabase.QuizHistoryInsert
 import com.example.acadex.data.supabase.QuizHistoryRow
+import com.example.acadex.data.supabase.QuizQuestionRow
 import com.example.acadex.data.supabase.QuizSetRow
 import com.example.acadex.data.supabase.SupabaseClient
 import com.example.acadex.util.UserIdentity
@@ -23,9 +27,36 @@ object QuizRepository {
     private const val NETWORK = "No connection. Please check your internet."
     private const val SERVER = "Something went wrong. Please try again."
 
-    /** Fire-and-forget quiz history insert (mock quiz id mapped to UUID if needed). */
+    suspend fun fetchQuizSets(): RepoResult<List<QuizSet>> = withContext(Dispatchers.IO) {
+        runRepo {
+            val sets = client().postgrest.from("quiz_sets").select {
+                order(column = "created_at", order = Order.DESCENDING)
+            }.decodeList<QuizSetRow>()
+            sets.map { row ->
+                val questions = client().postgrest.from("quiz_questions").select {
+                    filter { eq("quiz_set_id", row.id) }
+                    order(column = "sort_order", order = Order.ASCENDING)
+                }.decodeList<QuizQuestionRow>()
+                row.toQuizSet(questions)
+            }.filter { it.questions.isNotEmpty() }
+        }
+    }
+
+    suspend fun fetchQuizById(quizSetId: String): RepoResult<QuizSet> = withContext(Dispatchers.IO) {
+        runRepo {
+            val row = client().postgrest.from("quiz_sets").select {
+                filter { eq("id", quizSetId) }
+            }.decodeSingle<QuizSetRow>()
+            val questions = client().postgrest.from("quiz_questions").select {
+                filter { eq("quiz_set_id", quizSetId) }
+                order(column = "sort_order", order = Order.ASCENDING)
+            }.decodeList<QuizQuestionRow>()
+            row.toQuizSet(questions)
+        }
+    }
+
     suspend fun recordHistory(quizSetId: String, score: Int, total: Int) {
-        if (!SupabaseClient.isConfigured || quizSetId.startsWith("mock-")) return
+        if (!SupabaseClient.isConfigured) return
         withContext(Dispatchers.IO) {
             try {
                 val uid = UserIdentity.uidOrNull() ?: return@withContext
@@ -77,6 +108,24 @@ object QuizRepository {
             Unit
         }
     }
+
+    private fun QuizSetRow.toQuizSet(questions: List<QuizQuestionRow>) = QuizSet(
+        id = id,
+        title = title,
+        subject = subject,
+        difficulty = when (difficulty.uppercase()) {
+            "MEDIUM" -> Difficulty.MEDIUM
+            "HARD" -> Difficulty.HARD
+            else -> Difficulty.EASY
+        },
+        questions = questions.map {
+            QuizQuestion(
+                question = it.prompt,
+                choices = it.options,
+                correctIndex = it.correctIndex
+            )
+        }
+    )
 
     private inline fun <T> runRepo(block: () -> T): RepoResult<T> {
         if (!SupabaseClient.isConfigured) return RepoResult.Error(SERVER)

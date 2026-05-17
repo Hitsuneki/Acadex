@@ -6,56 +6,27 @@
     android:layout_height="match_parent"
     android:background="@color/bg_white">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/navy_primary">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:letterSpacing="0.08"
-                android:text="@string/app_name"
-                android:textAppearance="@style/TextAppearance.Acadex.Display"
-                android:textColor="@color/text_on_navy"
-                android:textSize="20sp" />
-
-            <ImageButton
-                android:id="@+id/btnSearch"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/search_hint"
-                android:src="@drawable/ic_search_on_navy" />
-
-            <ImageButton
-                android:id="@+id/btnBell"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/feature_coming_soon"
-                android:src="@drawable/ic_bell" />
-        </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:paddingTop="8dp"
             android:paddingBottom="88dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSearch"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/search_hint"
+                app:icon="@drawable/ic_search"
+                app:strokeColor="@color/border_light" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

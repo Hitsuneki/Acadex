@@ -11,10 +11,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.acadex.R
 import com.example.acadex.databinding.FragmentProfileBinding
+import androidx.navigation.NavOptions
 import com.example.acadex.databinding.IncludeErrorStateBinding
 import com.example.acadex.ui.common.UiState
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
@@ -33,25 +34,19 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         errorBinding?.btnRetry?.setOnClickListener { viewModel.load() }
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigate(
+                R.id.homeFragment,
+                null,
+                NavOptions.Builder()
+                    .setPopUpTo(R.id.homeFragment, true)
+                    .setLaunchSingleTop(true)
+                    .build()
+            )
+        }
         binding.btnEditProfile.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToEditProfile())
+            findNavController().navigate(R.id.editProfileFragment)
         }
-        binding.rowSubmissions.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToMySubmissions())
-        }
-        binding.rowSaved.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToSavedIndex())
-        }
-        binding.rowQuizHistory.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToQuizHistory())
-        }
-        binding.rowSettings.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToSettings())
-        }
-        binding.rowAbout.setOnClickListener {
-            findNavController().navigate(ProfileFragmentDirections.actionProfileToAbout())
-        }
-        binding.btnSignOut.setOnClickListener { FirebaseAuth.getInstance().signOut() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -75,8 +70,10 @@ class ProfileFragment : Fragment() {
         if (state is UiState.Success) {
             val data = state.data
             binding.profileName.text = data.displayName
-            binding.profileSection.text = data.section
+            binding.profileStatus.text = viewModel.formatStatus(data.status)
             binding.avatarInitials.text = viewModel.initials(data.displayName)
+            binding.profileAbout.text = data.aboutMe.ifBlank { getString(R.string.profile_about_empty) }
+            binding.profileGender.text = data.gender.ifBlank { getString(R.string.profile_field_empty) }
             binding.statUploads.text = data.uploads.toString()
             binding.statDownloads.text = data.downloads.toString()
             binding.statAvgRating.text = if (data.uploads == 0) "—" else "%.1f".format(data.avgRating)

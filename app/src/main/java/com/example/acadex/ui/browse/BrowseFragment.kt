@@ -14,7 +14,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.acadex.R
 import com.example.acadex.adapter.FileCardAdapter
-import com.example.acadex.data.MockDataSource
+import com.example.acadex.data.SortOption
+import com.example.acadex.data.SubjectCatalog
 import com.example.acadex.databinding.FragmentBrowseBinding
 import com.example.acadex.util.SubjectChipHelper
 
@@ -52,9 +53,9 @@ class BrowseFragment : Fragment() {
         binding.sortDropdown.setText(sortOptions[0], false)
         binding.sortDropdown.setOnItemClickListener { _, _, position, _ ->
             val sort = when (position) {
-                1 -> MockDataSource.SortOption.MOST_DOWNLOADED
-                2 -> MockDataSource.SortOption.TOP_RATED
-                else -> MockDataSource.SortOption.NEWEST
+                1 -> SortOption.MOST_DOWNLOADED
+                2 -> SortOption.TOP_RATED
+                else -> SortOption.NEWEST
             }
             viewModel.setSort(sort)
         }
@@ -76,6 +77,7 @@ class BrowseFragment : Fragment() {
         })
 
         viewModel.files.observe(viewLifecycleOwner) { files ->
+            chipHelper.updateSubjects(SubjectCatalog.forMaterials(files))
             fileAdapter.submitList(files)
             binding.emptyState.visibility = if (files.isEmpty()) View.VISIBLE else View.GONE
             binding.filesRecycler.visibility = if (files.isEmpty()) View.GONE else View.VISIBLE

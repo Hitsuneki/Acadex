@@ -33,7 +33,9 @@ class ProfileViewModel : ViewModel() {
                             _uiState.value = UiState.Success(
                                 ProfileUiData(
                                     displayName = profile.displayName,
-                                    section = profile.section.ifBlank { "Student" },
+                                    aboutMe = profile.aboutMe,
+                                    gender = profile.gender,
+                                    status = profile.status,
                                     uploads = stats.uploads,
                                     downloads = stats.downloads,
                                     avgRating = stats.avgRating
@@ -48,12 +50,20 @@ class ProfileViewModel : ViewModel() {
 
     fun initials(name: String): String =
         name.split(" ").mapNotNull { it.firstOrNull()?.uppercaseChar() }.take(2).joinToString("")
-            .ifEmpty { "S" }
+            .ifEmpty { "?" }
+
+    fun formatStatus(status: String): String = when (status.lowercase()) {
+        "teacher" -> "Teacher"
+        "other" -> "Other"
+        else -> "Student"
+    }
 }
 
 data class ProfileUiData(
     val displayName: String,
-    val section: String,
+    val aboutMe: String,
+    val gender: String,
+    val status: String,
     val uploads: Int,
     val downloads: Int,
     val avgRating: Float

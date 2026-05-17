@@ -31,16 +31,44 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         binding.nameEditText.doAfterTextChanged { viewModel.setDisplayName(it?.toString().orEmpty()) }
-        binding.sectionEditText.doAfterTextChanged { viewModel.setSection(it?.toString().orEmpty()) }
+        binding.aboutMeEditText.doAfterTextChanged { viewModel.setAboutMe(it?.toString().orEmpty()) }
+        binding.genderEditText.doAfterTextChanged { viewModel.setGender(it?.toString().orEmpty()) }
+
+        binding.statusChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            val status = when (id) {
+                R.id.chipTeacher -> "teacher"
+                R.id.chipOther -> "other"
+                else -> "student"
+            }
+            viewModel.setStatus(status)
+        }
+
         binding.btnSave.setOnClickListener { viewModel.save() }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.displayName.collect { if (binding.nameEditText.text?.toString() != it) binding.nameEditText.setText(it) }
+                    viewModel.displayName.collect {
+                        if (binding.nameEditText.text?.toString() != it) binding.nameEditText.setText(it)
+                    }
                 }
                 launch {
-                    viewModel.section.collect { if (binding.sectionEditText.text?.toString() != it) binding.sectionEditText.setText(it) }
+                    viewModel.aboutMe.collect {
+                        if (binding.aboutMeEditText.text?.toString() != it) binding.aboutMeEditText.setText(it)
+                    }
+                }
+                launch {
+                    viewModel.gender.collect {
+                        if (binding.genderEditText.text?.toString() != it) binding.genderEditText.setText(it)
+                    }
+                }
+                launch {
+                    viewModel.status.collect { status ->
+                        binding.chipStudent.isChecked = status == "student"
+                        binding.chipTeacher.isChecked = status == "teacher"
+                        binding.chipOther.isChecked = status == "other"
+                    }
                 }
                 launch {
                     viewModel.saveResult.collect { result ->

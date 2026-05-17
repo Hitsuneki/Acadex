@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.acadex.R
-import com.example.acadex.data.repository.ProfileRepository
 import com.example.acadex.data.repository.QuizRepository
 import com.example.acadex.data.repository.SavedRepository
 import com.example.acadex.data.result.RepoResult
@@ -50,17 +49,6 @@ class SettingsFragment : Fragment() {
         binding.switchNotifQuizzes.setOnCheckedChangeListener { _, checked ->
             prefs.edit().putBoolean(KEY_NOTIF_QUIZZES, checked).apply()
         }
-
-        val profile = ProfileRepository.cachedProfile.value
-        binding.rowAccountName.text = getString(R.string.display_name)
-        binding.rowAccountSection.text = getString(R.string.section_year)
-        updateAccountSubtitles(profile?.displayName, profile?.section)
-
-        val toEdit = View.OnClickListener {
-            findNavController().navigate(SettingsFragmentDirections.actionSettingsToEditProfile())
-        }
-        binding.rowAccountName.setOnClickListener(toEdit)
-        binding.rowAccountSection.setOnClickListener(toEdit)
 
         binding.rowClearSaved.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
@@ -103,17 +91,6 @@ class SettingsFragment : Fragment() {
                 is RepoResult.Error ->
                     Snackbar.make(binding.root, R.string.clear_failed, Snackbar.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    private fun updateAccountSubtitles(name: String?, section: String?) {
-        binding.rowAccountName.text = buildString {
-            append(getString(R.string.display_name))
-            if (!name.isNullOrBlank()) append("\n").append(name)
-        }
-        binding.rowAccountSection.text = buildString {
-            append(getString(R.string.section_year))
-            append("\n").append(section?.ifBlank { "—" } ?: "—")
         }
     }
 

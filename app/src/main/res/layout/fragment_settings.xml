@@ -44,15 +44,5 @@
             android:id="@+id/rowClearQuizHistory"
             style="@style/Widget.Acadex.ProfileRow"
             android:text="@string/clear_quiz_history" />
-
-        <TextView style="@style/Widget.Acadex.SettingsSection" android:text="@string/section_account" />
-        <TextView
-            android:id="@+id/rowAccountName"
-            style="@style/Widget.Acadex.ProfileRow"
-            android:text="@string/display_name" />
-        <TextView
-            android:id="@+id/rowAccountSection"
-            style="@style/Widget.Acadex.ProfileRow"
-            android:text="@string/section_year" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

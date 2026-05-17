@@ -42,7 +42,7 @@ object ProfileRepository {
                 existing.toUserProfile()
             } else {
                 client().postgrest.from("profiles").upsert(
-                    ProfileUpsert(id = uid, displayName = displayName, section = "")
+                    ProfileUpsert(id = uid, displayName = displayName)
                 ) {
                     select()
                 }.decodeSingle<ProfileRow>().toUserProfile()
@@ -67,23 +67,32 @@ object ProfileRepository {
         }
     }
 
-    suspend fun updateProfile(displayName: String, section: String): RepoResult<UserProfile> =
-        withContext(Dispatchers.IO) {
-            val uid = UserIdentity.requireUid()
-            runRepo {
-                client().postgrest.from("profiles").update(
-                    ProfileUpdate(displayName = displayName, section = section)
-                ) {
-                    filter { eq("id", uid) }
-                }
-                FirebaseAuth.getInstance().currentUser
-                    ?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(displayName).build())
-                    ?.await()
-                val profile = UserProfile(uid, displayName, section)
-                _cachedProfile.value = profile
-                profile
+    suspend fun updateProfile(
+        displayName: String,
+        aboutMe: String,
+        gender: String,
+        status: String
+    ): RepoResult<UserProfile> = withContext(Dispatchers.IO) {
+        val uid = UserIdentity.requireUid()
+        runRepo {
+            client().postgrest.from("profiles").update(
+                ProfileUpdate(
+                    displayName = displayName,
+                    aboutMe = aboutMe,
+                    gender = gender,
+                    status = status
+                )
+            ) {
+                filter { eq("id", uid) }
             }
+            FirebaseAuth.getInstance().currentUser
+                ?.updateProfile(UserProfileChangeRequest.Builder().setDisplayName(displayName).build())
+                ?.await()
+            val profile = UserProfile(uid, displayName, aboutMe, gender, status)
+            _cachedProfile.value = profile
+            profile
         }
+    }
 
     private inline fun <T> runRepo(block: () -> T): RepoResult<T> {
         if (!SupabaseClient.isConfigured) return RepoResult.Error(SERVER)
@@ -100,6 +109,8 @@ object ProfileRepository {
     private fun ProfileRow.toUserProfile() = UserProfile(
         id = id,
         displayName = displayName,
-        section = section
+        aboutMe = aboutMe,
+        gender = gender,
+        status = status.ifBlank { "student" }
     )
 }

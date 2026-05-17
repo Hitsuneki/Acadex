@@ -52,11 +52,21 @@ class FileCardAdapter(
                 }
                 FileCardAction.BOOKMARK_FILLED -> {
                     b.btnCardAction.isVisible = true
-                    b.btnCardAction.setImageResource(android.R.drawable.btn_star_big_on)
+                    b.btnCardAction.setImageResource(com.example.acadex.R.drawable.ic_bookmark_filled)
+                    b.btnCardAction.imageTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(ctx, com.example.acadex.R.color.star_amber)
+                    )
+                    b.btnCardAction.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+                    b.btnCardAction.setPadding(8, 8, 8, 8)
                 }
                 FileCardAction.BOOKMARK_OUTLINE -> {
                     b.btnCardAction.isVisible = true
-                    b.btnCardAction.setImageResource(android.R.drawable.btn_star_big_off)
+                    b.btnCardAction.setImageResource(com.example.acadex.R.drawable.ic_bookmark_outline)
+                    b.btnCardAction.imageTintList = ColorStateList.valueOf(
+                        ContextCompat.getColor(ctx, com.example.acadex.R.color.text_muted)
+                    )
+                    b.btnCardAction.scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
+                    b.btnCardAction.setPadding(8, 8, 8, 8)
                 }
             }
             b.btnCardAction.setOnClickListener { onActionClick?.invoke(file) }
