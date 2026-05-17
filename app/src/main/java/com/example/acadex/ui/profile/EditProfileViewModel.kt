@@ -14,16 +14,27 @@ class EditProfileViewModel : ViewModel() {
     private val _displayName = MutableStateFlow("")
     val displayName: StateFlow<String> = _displayName.asStateFlow()
 
-    private val _section = MutableStateFlow("")
-    val section: StateFlow<String> = _section.asStateFlow()
+    private val _aboutMe = MutableStateFlow("")
+    val aboutMe: StateFlow<String> = _aboutMe.asStateFlow()
+
+    private val _gender = MutableStateFlow("")
+    val gender: StateFlow<String> = _gender.asStateFlow()
+
+    private val _status = MutableStateFlow("student")
+    val status: StateFlow<String> = _status.asStateFlow()
 
     private val _saveResult = MutableStateFlow<SaveResult?>(null)
     val saveResult: StateFlow<SaveResult?> = _saveResult.asStateFlow()
 
     init {
-        ProfileRepository.cachedProfile.value?.let {
-            _displayName.value = it.displayName
-            _section.value = it.section
+        viewModelScope.launch {
+            ProfileRepository.loadProfile()
+            ProfileRepository.cachedProfile.value?.let { profile ->
+                _displayName.value = profile.displayName
+                _aboutMe.value = profile.aboutMe
+                _gender.value = profile.gender
+                _status.value = profile.status
+            }
         }
     }
 
@@ -31,8 +42,16 @@ class EditProfileViewModel : ViewModel() {
         _displayName.value = value
     }
 
-    fun setSection(value: String) {
-        _section.value = value
+    fun setAboutMe(value: String) {
+        _aboutMe.value = value
+    }
+
+    fun setGender(value: String) {
+        _gender.value = value
+    }
+
+    fun setStatus(value: String) {
+        _status.value = value
     }
 
     fun save() {
@@ -42,7 +61,14 @@ class EditProfileViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            when (val result = ProfileRepository.updateProfile(name, _section.value.trim())) {
+            when (
+                val result = ProfileRepository.updateProfile(
+                    displayName = name,
+                    aboutMe = _aboutMe.value.trim(),
+                    gender = _gender.value.trim(),
+                    status = _status.value
+                )
+            ) {
                 is RepoResult.Success -> _saveResult.value = SaveResult.Success
                 is RepoResult.Error -> _saveResult.value = SaveResult.Failed
             }

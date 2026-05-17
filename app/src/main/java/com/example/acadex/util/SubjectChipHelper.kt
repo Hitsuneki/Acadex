@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.acadex.R
-import com.example.acadex.data.MockDataSource
 import com.google.android.material.chip.Chip
 
 class SubjectChipHelper(
@@ -15,10 +14,18 @@ class SubjectChipHelper(
     private val onSelect: (String) -> Unit
 ) {
     private var selected = "All"
+    private var subjects: List<String> = listOf("All")
 
-    fun setup() {
+    fun setup(initialSubjects: List<String> = listOf("All")) {
+        subjects = initialSubjects
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = Adapter()
+    }
+
+    fun updateSubjects(newSubjects: List<String>) {
+        subjects = newSubjects
+        if (selected !in subjects) selected = "All"
+        recyclerView.adapter?.notifyDataSetChanged()
     }
 
     private inner class Adapter : RecyclerView.Adapter<Adapter.H>() {
@@ -26,8 +33,8 @@ class SubjectChipHelper(
             val chip = LayoutInflater.from(parent.context).inflate(R.layout.item_subject_chip, parent, false) as Chip
             return H(chip)
         }
-        override fun onBindViewHolder(holder: H, position: Int) = holder.bind(MockDataSource.subjects[position])
-        override fun getItemCount() = MockDataSource.subjects.size
+        override fun onBindViewHolder(holder: H, position: Int) = holder.bind(subjects[position])
+        override fun getItemCount() = subjects.size
         inner class H(private val chip: Chip) : RecyclerView.ViewHolder(chip) {
             fun bind(label: String) {
                 chip.text = label
@@ -43,7 +50,11 @@ class SubjectChipHelper(
                     chip.chipStrokeWidth = ctx.resources.displayMetrics.density
                     chip.chipStrokeColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.border_light))
                 }
-                chip.setOnClickListener { selected = label; notifyDataSetChanged(); onSelect(label) }
+                chip.setOnClickListener {
+                    selected = label
+                    notifyDataSetChanged()
+                    onSelect(label)
+                }
             }
         }
     }

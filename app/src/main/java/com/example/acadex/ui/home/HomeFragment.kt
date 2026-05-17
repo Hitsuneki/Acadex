@@ -10,11 +10,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.acadex.R
 import com.example.acadex.adapter.FileCardAdapter
-import com.example.acadex.data.MockDataSource
-import com.example.acadex.data.ResourceRepository
+import com.example.acadex.data.repository.ProfileRepository
 import com.example.acadex.databinding.FragmentHomeBinding
 import com.example.acadex.util.SubjectChipHelper
-import com.google.android.material.snackbar.Snackbar
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
@@ -39,12 +37,16 @@ class HomeFragment : Fragment() {
         })
         binding.filesRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.filesRecycler.adapter = adapter
+
         viewModel.files.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        viewModel.subjects.observe(viewLifecycleOwner) { chips.updateSubjects(it) }
+        viewModel.quizCount.observe(viewLifecycleOwner) { count ->
+            binding.statQuizzes.text = count.toString()
+            binding.quizSetsSubtitle.text = getString(R.string.quiz_sets_available, count)
+        }
+
         binding.btnSearch.setOnClickListener {
             findNavController().navigate(HomeFragmentDirections.actionHomeToBrowse(true))
-        }
-        binding.btnBell.setOnClickListener {
-            Snackbar.make(binding.root, R.string.feature_coming_soon, Snackbar.LENGTH_SHORT).show()
         }
         binding.btnSeeAll.setOnClickListener { findNavController().navigate(R.id.browseFragment) }
         binding.btnSeeAllQuizzes.setOnClickListener { findNavController().navigate(R.id.quizFragment) }
@@ -59,7 +61,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun refreshHeader() {
-        val name = MockDataSource.profileName
+        val name = ProfileRepository.cachedProfile.value?.displayName?.ifBlank { null }
+            ?: getString(R.string.default_user_name)
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         val greet = when {
             hour < 12 -> getString(R.string.greeting_morning, name)
@@ -67,10 +70,8 @@ class HomeFragment : Fragment() {
             else -> getString(R.string.greeting_evening, name)
         }
         binding.greetingText.text = greet
-        binding.statMaterials.text = ResourceRepository.getAllFiles().size.toString()
-        binding.statSubjects.text = (MockDataSource.subjects.size - 1).toString()
-        binding.statQuizzes.text = MockDataSource.quizSets.size.toString()
-        binding.quizSetsSubtitle.text = getString(R.string.quiz_sets_available, MockDataSource.quizSets.size)
+        binding.statMaterials.text = viewModel.materialCount().toString()
+        binding.statSubjects.text = viewModel.subjectCount().toString()
     }
 
     override fun onDestroyView() {

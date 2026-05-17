@@ -7,38 +7,67 @@
     android:layout_marginVertical="4dp"
     app:cardBackgroundColor="@color/bg_surface"
     app:cardCornerRadius="8dp"
-    app:strokeColor="@color/card_border"
+    app:strokeColor="@color/border_light"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/commenterName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold"
-            tools:text="Juan Dela Cruz" />
-
-        <TextView
-            android:id="@+id/commentText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/text_primary"
-            tools:text="Super helpful!" />
-
-        <TextView
-            android:id="@+id/commentDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/text_secondary"
+            android:id="@+id/avatarInitials"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:textColor="@color/text_on_navy"
             android:textSize="12sp"
-            tools:text="May 13, 2025" />
+            android:textStyle="bold"
+            tools:text="AR" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/commenterName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                tools:text="Ana Reyes" />
+
+            <TextView
+                android:id="@+id/commentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_primary"
+                tools:text="Super helpful!" />
+
+            <TextView
+                android:id="@+id/commentDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                tools:text="2 hours ago" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeleteComment"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_comment"
+            android:src="@android:drawable/ic_menu_delete"
+            android:visibility="gone" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

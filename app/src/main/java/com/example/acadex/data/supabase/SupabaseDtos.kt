@@ -36,6 +36,9 @@ data class MaterialInsert(
 data class ProfileRow(
     val id: String,
     @SerialName("display_name") val displayName: String,
+    @SerialName("about_me") val aboutMe: String = "",
+    val gender: String = "",
+    val status: String = "student",
     val section: String = "",
     @SerialName("created_at") val createdAt: String? = null,
     @SerialName("updated_at") val updatedAt: String? = null
@@ -45,13 +48,17 @@ data class ProfileRow(
 data class ProfileUpsert(
     val id: String,
     @SerialName("display_name") val displayName: String,
-    val section: String = ""
+    @SerialName("about_me") val aboutMe: String = "",
+    val gender: String = "",
+    val status: String = "student"
 )
 
 @Serializable
 data class ProfileUpdate(
     @SerialName("display_name") val displayName: String,
-    val section: String
+    @SerialName("about_me") val aboutMe: String = "",
+    val gender: String = "",
+    val status: String = "student"
 )
 
 @Serializable
@@ -78,6 +85,16 @@ data class QuizSetRow(
     val title: String,
     val subject: String,
     val difficulty: String = "EASY"
+)
+
+@Serializable
+data class QuizQuestionRow(
+    val id: String,
+    @SerialName("quiz_set_id") val quizSetId: String,
+    val prompt: String,
+    val options: List<String> = emptyList(),
+    @SerialName("correct_index") val correctIndex: Int = 0,
+    @SerialName("sort_order") val sortOrder: Int = 0
 )
 
 @Serializable
@@ -113,6 +130,12 @@ data class RatingInsert(
     @SerialName("user_id") val userId: String,
     @SerialName("user_name") val userName: String? = null,
     val rating: Float
+)
+
+@Serializable
+data class RatingPatch(
+    val rating: Float,
+    @SerialName("user_name") val userName: String? = null
 )
 
 @Serializable

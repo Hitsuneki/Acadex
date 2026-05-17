@@ -14,19 +14,24 @@ import com.example.acadex.data.supabase.MaterialInsert
 import com.example.acadex.data.supabase.MaterialRow
 import com.example.acadex.data.supabase.MaterialStatsUpdate
 import com.example.acadex.data.supabase.RatingInsert
+import com.example.acadex.data.supabase.RatingPatch
 import com.example.acadex.data.supabase.SavedMaterialRow
 import com.example.acadex.data.supabase.SupabaseClient
 import com.example.acadex.util.FileTypeUtils
 import com.example.acadex.util.MimeTypeUtils
 import com.example.acadex.util.UserIdentity
+import com.example.acadex.data.supabase.IncrementDownloadParams
+import com.example.acadex.util.RelativeTimeUtils
+import com.example.acadex.util.StorageUrlHelper
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
+import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
+import com.example.acadex.util.NetworkFetch
 
 object MaterialRepository {
 
@@ -147,31 +152,130 @@ object MaterialRepository {
         }
     }
 
-    suspend fun submitRating(materialId: String, stars: Float, userName: String): RepoResult<Unit> =
+    suspend fun fetchUserRating(materialId: String, userId: String): RepoResult<Float?> =
+        withContext(Dispatchers.IO) {
+            runRepo {
+                val rows = client().postgrest.from("ratings").select {
+                    filter {
+                        eq("material_id", materialId)
+                        eq("user_id", userId)
+                    }
+                }.decodeList<com.example.acadex.data.supabase.RatingRow>()
+                rows.firstOrNull()?.rating
+            }
+        }
+
+    suspend fun submitRating(materialId: String, stars: Float, userName: String): RepoResult<ResourceFile> =
         withContext(Dispatchers.IO) {
             runRepo {
                 val userId = UserIdentity.requireUid()
-                client().postgrest.from("ratings").upsert(
-                    RatingInsert(
-                        materialId = materialId,
-                        userId = userId,
-                        userName = userName,
-                        rating = stars
-                    )
-                )
-                val ratings = client().postgrest.from("ratings").select {
-                    filter { eq("material_id", materialId) }
+                val existing = client().postgrest.from("ratings").select {
+                    filter {
+                        eq("material_id", materialId)
+                        eq("user_id", userId)
+                    }
                 }.decodeList<com.example.acadex.data.supabase.RatingRow>()
-                val count = ratings.size
-                val avg = if (count == 0) 0f else ratings.sumOf { it.rating.toDouble() }.toFloat() / count
-                client().postgrest.from("materials").update(
-                    MaterialStatsUpdate(ratingAvg = avg, ratingCount = count)
-                ) {
-                    filter { eq("id", materialId) }
+
+                if (existing.isNotEmpty()) {
+                    client().postgrest.from("ratings").update(
+                        RatingPatch(rating = stars, userName = userName)
+                    ) {
+                        filter { eq("id", existing.first().id) }
+                    }
+                } else {
+                    client().postgrest.from("ratings").insert(
+                        RatingInsert(
+                            materialId = materialId,
+                            userId = userId,
+                            userName = userName,
+                            rating = stars
+                        )
+                    )
                 }
-                Unit
+                recalculateMaterialRating(materialId)
+                client().postgrest.from("materials").select {
+                    filter { eq("id", materialId) }
+                }.decodeSingle<MaterialRow>().toResourceFile()
             }
         }
+
+    private suspend fun recalculateMaterialRating(materialId: String) {
+        val ratings = client().postgrest.from("ratings").select {
+            filter { eq("material_id", materialId) }
+        }.decodeList<com.example.acadex.data.supabase.RatingRow>()
+        val avg = if (ratings.isEmpty()) 0f else ratings.map { it.rating }.average().toFloat()
+        val count = ratings.size
+        client().postgrest.from("materials").update(
+            MaterialStatsUpdate(ratingAvg = avg, ratingCount = count)
+        ) {
+            filter { eq("id", materialId) }
+        }
+    }
+
+    suspend fun incrementDownloadCount(materialId: String): RepoResult<Unit> =
+        withContext(Dispatchers.IO) {
+            if (!SupabaseClient.isConfigured) return@withContext RepoResult.Error(SERVER)
+            try {
+                client().postgrest.rpc(
+                    "increment_download_count",
+                    IncrementDownloadParams(materialId = materialId)
+                )
+                RepoResult.Success(Unit)
+            } catch (e: Exception) {
+                Log.e(TAG, "increment_download_count RPC failed, falling back", e)
+                try {
+                    val row = client().postgrest.from("materials").select {
+                        filter { eq("id", materialId) }
+                    }.decodeSingle<MaterialRow>()
+                    client().postgrest.from("materials").update(
+                        DownloadCountUpdate(downloadCount = row.downloadCount + 1)
+                    ) {
+                        filter { eq("id", materialId) }
+                    }
+                    RepoResult.Success(Unit)
+                } catch (fallback: Exception) {
+                    Log.e(TAG, "increment download fallback failed", fallback)
+                    RepoResult.Error(fallback.userMessage(NETWORK, SERVER), fallback)
+                }
+            }
+        }
+
+    /** Downloads via Storage API first (reliable), then public HTTP URL as fallback. */
+    suspend fun downloadFile(storagePath: String?, publicUrl: String?): RepoResult<ByteArray> =
+        withContext(Dispatchers.IO) {
+            if (!SupabaseClient.isConfigured) return@withContext RepoResult.Error(SERVER)
+            if (!storagePath.isNullOrBlank()) {
+                try {
+                    val bytes = client().storage
+                        .from(SupabaseClient.MATERIALS_BUCKET)
+                        .downloadAuthenticated(storagePath)
+                    if (bytes.isNotEmpty()) return@withContext RepoResult.Success(bytes)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Storage download failed: $storagePath", e)
+                }
+            }
+            val url = publicUrl ?: storagePath?.let { StorageUrlHelper.publicUrl(it) }
+            if (!url.isNullOrBlank()) {
+                return@withContext downloadBytes(url)
+            }
+            RepoResult.Error(SERVER)
+        }
+
+    suspend fun downloadBytes(publicUrl: String): RepoResult<ByteArray> = withContext(Dispatchers.IO) {
+        runRepo {
+            NetworkFetch.downloadBytes(publicUrl)
+        }
+    }
+
+    suspend fun fetchContentLength(publicUrl: String): Long? = withContext(Dispatchers.IO) {
+        runCatching {
+            val connection = NetworkFetch.openConnection(publicUrl).apply {
+                requestMethod = "HEAD"
+            }
+            connection.connect()
+            connection.contentLengthLong.takeIf { it > 0 }
+        }.getOrNull()
+    }
 
     suspend fun postComment(materialId: String, text: String, commenterName: String): RepoResult<Comment> =
         withContext(Dispatchers.IO) {
@@ -194,20 +298,93 @@ object MaterialRepository {
         runRepo {
             client().postgrest.from("comments").select {
                 filter { eq("material_id", materialId) }
-                order(column = "created_at", order = Order.DESCENDING)
+                order(column = "created_at", order = Order.ASCENDING)
             }.decodeList<CommentRow>().map { it.toComment() }
         }
     }
 
-    suspend fun recordDownload(material: ResourceFile): RepoResult<String?> = withContext(Dispatchers.IO) {
+    suspend fun deleteComment(commentId: String): RepoResult<Unit> = withContext(Dispatchers.IO) {
         runRepo {
-            val newCount = material.downloadCount + 1
-            client().postgrest.from("materials").update(DownloadCountUpdate(downloadCount = newCount)) {
-                filter { eq("id", material.id) }
+            client().postgrest.from("comments").delete {
+                filter { eq("id", commentId) }
             }
-            material.downloadUrl
+            Unit
         }
     }
+
+    data class FileDetailBundle(
+        val material: ResourceFile,
+        val comments: List<Comment>,
+        val commentsError: String?,
+        val userRating: Float?,
+        val isSaved: Boolean
+    )
+
+    suspend fun loadFileDetail(materialId: String, userId: String?): RepoResult<FileDetailBundle> =
+        withContext(Dispatchers.IO) {
+            if (!SupabaseClient.isConfigured) return@withContext RepoResult.Error(SERVER)
+            try {
+                coroutineScope {
+                    val materialDeferred = async {
+                        client().postgrest.from("materials").select {
+                            filter { eq("id", materialId) }
+                        }.decodeSingle<MaterialRow>()
+                    }
+                    val commentsDeferred = async {
+                        client().postgrest.from("comments").select {
+                            filter { eq("material_id", materialId) }
+                            order(column = "created_at", order = Order.ASCENDING)
+                        }.decodeList<CommentRow>()
+                    }
+                    val ratingDeferred = async {
+                        if (userId == null) null
+                        else {
+                            client().postgrest.from("ratings").select {
+                                filter {
+                                    eq("material_id", materialId)
+                                    eq("user_id", userId)
+                                }
+                            }.decodeList<com.example.acadex.data.supabase.RatingRow>().firstOrNull()?.rating
+                        }
+                    }
+                    val savedDeferred = async {
+                        if (userId == null) false
+                        else {
+                            client().postgrest.from("saved_materials").select {
+                                filter {
+                                    eq("user_id", userId)
+                                    eq("material_id", materialId)
+                                }
+                            }.decodeList<SavedMaterialRow>().isNotEmpty()
+                        }
+                    }
+
+                    val row = materialDeferred.await()
+                    val isSaved = savedDeferred.await()
+                    val commentsResult = runCatching {
+                        commentsDeferred.await().map { it.toComment() }
+                    }
+                    val comments = commentsResult.getOrDefault(emptyList())
+                    val commentsError = commentsResult.exceptionOrNull()?.userMessage(NETWORK, SERVER)
+                    val material = row.toResourceFile(
+                        comments = comments.toMutableList(),
+                        isSaved = isSaved
+                    )
+                    RepoResult.Success(
+                        FileDetailBundle(
+                            material = material,
+                            comments = comments,
+                            commentsError = commentsError,
+                            userRating = ratingDeferred.await(),
+                            isSaved = isSaved
+                        )
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "loadFileDetail failed", e)
+                RepoResult.Error(e.userMessage(NETWORK, SERVER), e)
+            }
+        }
 
     suspend fun isSaved(materialId: String, userId: String): RepoResult<Boolean> = withContext(Dispatchers.IO) {
         runRepo {
@@ -236,11 +413,7 @@ object MaterialRepository {
         comments: MutableList<Comment> = mutableListOf(),
         isSaved: Boolean = false
     ): ResourceFile {
-        val url = storagePath?.let { path ->
-            runCatching {
-                client().storage.from(SupabaseClient.MATERIALS_BUCKET).publicUrl(path)
-            }.getOrNull()
-        }
+        val url = StorageUrlHelper.publicUrl(storagePath)
         return ResourceFile(
             id = id,
             title = title,
@@ -261,23 +434,16 @@ object MaterialRepository {
     }
 
     private fun CommentRow.toComment() = Comment(
+        id = id,
+        userId = userId,
         commenterName = commenterName,
         text = body,
-        date = formatDate(createdAt),
-        remoteId = id
+        createdAtIso = createdAt.orEmpty(),
+        displayDate = RelativeTimeUtils.formatDisplayDate(createdAt),
+        relativeTime = RelativeTimeUtils.formatRelative(createdAt)
     )
 
-    private fun formatDate(iso: String?): String {
-        if (iso.isNullOrBlank()) return ""
-        return runCatching {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).apply {
-                timeZone = TimeZone.getTimeZone("UTC")
-            }
-            val out = SimpleDateFormat("MMM d, yyyy", Locale.US)
-            val parsed = parser.parse(iso.take(19)) ?: return iso
-            out.format(parsed)
-        }.getOrDefault(iso)
-    }
+    private fun formatDate(iso: String?): String = RelativeTimeUtils.formatDisplayDate(iso)
 
     data class UserMaterialStats(
         val uploads: Int,

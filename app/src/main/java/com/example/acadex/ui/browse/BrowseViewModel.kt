@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.acadex.data.MockDataSource
 import com.example.acadex.data.ResourceRepository
+import com.example.acadex.data.SortOption
 import com.example.acadex.data.model.ResourceFile
 import kotlinx.coroutines.launch
 
@@ -16,7 +16,7 @@ class BrowseViewModel : ViewModel() {
 
     private var subject = "All"
     private var query = ""
-    private var sortBy = MockDataSource.SortOption.NEWEST
+    private var sortBy = SortOption.NEWEST
 
     init {
         refresh()
@@ -32,7 +32,7 @@ class BrowseViewModel : ViewModel() {
         refresh()
     }
 
-    fun setSort(sort: MockDataSource.SortOption) {
+    fun setSort(sort: SortOption) {
         sortBy = sort
         refresh()
     }

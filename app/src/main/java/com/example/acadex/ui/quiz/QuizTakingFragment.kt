@@ -16,7 +16,7 @@ import com.example.acadex.data.repository.QuizRepository
 import kotlinx.coroutines.launch
 import androidx.navigation.fragment.navArgs
 import com.example.acadex.R
-import com.example.acadex.data.MockDataSource
+import com.example.acadex.data.result.RepoResult
 import com.example.acadex.data.model.QuizQuestion
 import com.example.acadex.data.model.QuizSet
 import com.example.acadex.databinding.FragmentQuizTakingBinding
@@ -45,28 +45,22 @@ class QuizTakingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val quizSet = MockDataSource.getQuizById(args.quizId)
-        if (quizSet == null) {
-            findNavController().navigateUp()
-            return
-        }
-        quiz = quizSet
-
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-        binding.resultsToolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-
+        binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+        binding.resultsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         binding.btnNext.setOnClickListener { onNextClicked() }
         binding.btnReviewAnswers.setOnClickListener { showReview() }
         binding.btnTryAgain.setOnClickListener { restartQuiz() }
-        binding.btnBackToQuizzes.setOnClickListener {
-            findNavController().navigateUp()
-        }
+        binding.btnBackToQuizzes.setOnClickListener { findNavController().navigateUp() }
 
-        startQuiz()
+        viewLifecycleOwner.lifecycleScope.launch {
+            when (val result = QuizRepository.fetchQuizById(args.quizId)) {
+                is RepoResult.Success -> {
+                    quiz = result.data
+                    startQuiz()
+                }
+                is RepoResult.Error -> findNavController().navigateUp()
+            }
+        }
     }
 
     private fun startQuiz() {
@@ -153,7 +147,7 @@ class QuizTakingFragment : Fragment() {
 
         lifecycleScope.launch {
             // Mock quizzes use local ids; Supabase history requires quiz_sets UUID rows.
-            QuizRepository.recordHistory(quizSetId = "mock-${quiz.id}", score = correct, total = total)
+            QuizRepository.recordHistory(quizSetId = quiz.id, score = correct, total = total)
         }
 
         binding.scoreText.text = getString(R.string.score_format, correct, total)

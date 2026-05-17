@@ -26,6 +26,8 @@ googleid = "1.2.0"
 supabaseBom = "3.0.3"
 ktor = "3.0.3"
 kotlinxSerialization = "1.7.3"
+glide = "4.16.0"
+photoView = "2.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,6 +59,8 @@ supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-k
 supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+photo-view = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoView" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -7,6 +7,21 @@ import com.example.acadex.data.model.FileType
 
 object FileTypeUtils {
 
+    fun inferFromPath(storagePath: String?, dbType: FileType): FileType {
+        val ext = storagePath?.substringAfterLast('.', "")?.lowercase().orEmpty()
+        if (ext.isBlank()) return dbType
+        return when (ext) {
+            "pdf" -> FileType.PDF
+            "docx" -> FileType.DOCX
+            "pptx" -> FileType.PPTX
+            "doc" -> FileType.DOC
+            "jpg", "jpeg" -> FileType.JPEG
+            "png" -> FileType.PNG
+            "txt" -> FileType.TXT
+            else -> dbType
+        }
+    }
+
     fun fromString(value: String): FileType = when (value.uppercase()) {
         "PDF" -> FileType.PDF
         "DOCX", "WORD" -> FileType.DOCX

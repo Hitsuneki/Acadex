@@ -114,6 +114,6 @@
         android:id="@+id/quizTakingFragment"
         android:name="com.example.acadex.ui.quiz.QuizTakingFragment"
         android:label="Quiz">
-        <argument android:name="quizId" app:argType="integer" />
+        <argument android:name="quizId" app:argType="string" />
     </fragment>
 </navigation>

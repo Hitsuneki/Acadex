@@ -1,7 +1,7 @@
 package com.example.acadex.data.model
 
 data class QuizSet(
-    val id: Int,
+    val id: String,
     val title: String,
     val subject: String,
     val difficulty: Difficulty,
