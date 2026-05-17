@@ -16,13 +16,13 @@ object MockDataSource {
     private var nextFileId = 6
 
     val files: MutableList<ResourceFile> = mutableListOf(
-        ResourceFile(0, "Calculus Finals Reviewer", "", "Math", FileType.PDF, "Juan dela Cruz", "May 10, 2025", 4.2f, 18, 84,
+        ResourceFile("0", "Calculus Finals Reviewer", "", "Math", FileType.PDF, "Juan dela Cruz", "May 10, 2025", 4.2f, 18, 84,
             mutableListOf(Comment("Ana R.", "Clear and complete.", "May 11, 2025"))),
-        ResourceFile(1, "Cell Division Notes", "", "Science", FileType.PDF, "Ana Reyes", "May 9, 2025", 4.7f, 24, 61),
-        ResourceFile(2, "Philippine Literature Guide", "", "Filipino", FileType.DOC, "Carlo Bautista", "May 8, 2025", 4.0f, 12, 33),
-        ResourceFile(3, "World War II Timeline", "", "History", FileType.IMAGE, "Maria Santos", "May 7, 2025", 4.5f, 15, 47),
-        ResourceFile(4, "Algebra Practice Set", "", "Math", FileType.QUIZ, "Pedro Cruz", "May 6, 2025", 4.8f, 31, 92, isSaved = true),
-        ResourceFile(5, "Python Basics Reviewer", "", "CS", FileType.PDF, "Lea Gomez", "May 5, 2025", 4.3f, 20, 55)
+        ResourceFile("1", "Cell Division Notes", "", "Science", FileType.PDF, "Ana Reyes", "May 9, 2025", 4.7f, 24, 61),
+        ResourceFile("2", "Philippine Literature Guide", "", "Filipino", FileType.DOC, "Carlo Bautista", "May 8, 2025", 4.0f, 12, 33),
+        ResourceFile("3", "World War II Timeline", "", "History", FileType.IMAGE, "Maria Santos", "May 7, 2025", 4.5f, 15, 47),
+        ResourceFile("4", "Algebra Practice Set", "", "Math", FileType.QUIZ, "Pedro Cruz", "May 6, 2025", 4.8f, 31, 92, isSaved = true),
+        ResourceFile("5", "Python Basics Reviewer", "", "CS", FileType.PDF, "Lea Gomez", "May 5, 2025", 4.3f, 20, 55)
     )
 
     val quizSets: List<QuizSet> = listOf(
@@ -56,9 +56,9 @@ object MockDataSource {
 
     enum class SortOption { NEWEST, MOST_DOWNLOADED, TOP_RATED }
 
-    fun getFileById(id: Int): ResourceFile? = files.find { it.id == id }
+    fun getFileById(id: String): ResourceFile? = files.find { it.id == id }
     fun getQuizById(id: Int): QuizSet? = quizSets.find { it.id == id }
-    fun createFileId(): Int = nextFileId++
+    fun createFileId(): String = "${nextFileId++}"
     fun getSavedFiles(): List<ResourceFile> = files.filter { it.isSaved }
 
     fun filterFiles(subject: String, query: String, sort: SortOption): List<ResourceFile> {

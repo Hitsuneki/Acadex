@@ -3,8 +3,11 @@ package com.example.acadex.ui.browse
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.acadex.data.MockDataSource
+import com.example.acadex.data.ResourceRepository
 import com.example.acadex.data.model.ResourceFile
+import kotlinx.coroutines.launch
 
 class BrowseViewModel : ViewModel() {
 
@@ -35,6 +38,9 @@ class BrowseViewModel : ViewModel() {
     }
 
     fun refresh() {
-        _files.value = MockDataSource.filterFiles(subject, query, sortBy)
+        viewModelScope.launch {
+            ResourceRepository.refreshFromSupabase()
+            _files.postValue(ResourceRepository.filterFiles(subject, query, sortBy))
+        }
     }
 }

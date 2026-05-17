@@ -1,120 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_white"
-    android:paddingBottom="88dp">
+    android:background="@color/bg_white">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/navy_primary"
-            app:title="@string/profile_title"
-            app:titleTextColor="@color/text_on_navy" />
+        android:layout_height="match_parent"
+        android:paddingBottom="88dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/avatarInitials"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:background="@drawable/bg_avatar"
-                android:gravity="center"
-                android:textColor="@color/text_on_navy"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                tools:text="ST" />
-
-            <TextView
-                android:id="@+id/profileName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:textAppearance="@style/TextAppearance.Acadex.Headline"
-                tools:text="Student" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/student_tag"
-                android:textAppearance="@style/TextAppearance.Acadex.Body" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp">
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                <TextView android:id="@+id/statUploads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="2" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_uploads" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginHorizontal="6dp" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                <TextView android:id="@+id/statDownloads" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="372" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_profile_downloads" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-            </LinearLayout>
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                <TextView android:id="@+id/statAvgRating" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="4.4" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_avg_rating" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardBackgroundColor="@color/bg_surface"
-            app:cardCornerRadius="6dp"
-            app:strokeColor="@color/border_light"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp">
+                android:background="@color/navy_primary"
+                android:paddingBottom="24dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <ImageButton
+                    android:id="@+id/btnEditProfile"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/edit_profile"
+                    android:src="@android:drawable/ic_menu_edit"
+                    app:tint="@color/text_on_navy" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/nameEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/your_name" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSaveName"
-                    style="@style/Widget.Acadex.Button.Primary"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/save_name" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingTop="48dp"
+                    android:paddingHorizontal="20dp">
 
-        <TextView android:id="@+id/rowSubmissions" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_my_submissions" />
-        <TextView android:id="@+id/rowSaved" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_saved_index" />
-        <TextView android:id="@+id/rowQuizHistory" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_quiz_history" />
-        <TextView android:id="@+id/rowRatings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_ratings_comments" />
-        <TextView android:id="@+id/rowSettings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_settings" />
-        <TextView android:id="@+id/rowAbout" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_about" />
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+                    <TextView
+                        android:id="@+id/avatarInitials"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:background="@drawable/bg_avatar"
+                        android:gravity="center"
+                        android:textColor="@color/text_on_navy"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="JD" />
+
+                    <TextView
+                        android:id="@+id/profileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textColor="@color/text_on_navy"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="Juan dela Cruz" />
+
+                    <TextView
+                        android:id="@+id/profileSection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/text_muted"
+                        android:textSize="14sp"
+                        tools:text="BSIT 3-A" />
+                </LinearLayout>
+            </FrameLayout>
+
+            <ProgressBar
+                android:id="@+id/loadingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="24dp"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/errorInclude"
+                layout="@layout/include_error_state"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <LinearLayout
+                android:id="@+id/profileContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_tile"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/statUploads"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="3" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_uploads"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="8dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_tile"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/statDownloads"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="120" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_profile_downloads"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_stat_tile"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/statAvgRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            tools:text="4.5" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_avg_rating"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/rowSubmissions"
+                    style="@style/Widget.Acadex.ProfileRow"
+                    android:text="@string/row_my_submissions" />
+
+                <TextView
+                    android:id="@+id/rowSaved"
+                    style="@style/Widget.Acadex.ProfileRow"
+                    android:text="@string/row_saved_index" />
+
+                <TextView
+                    android:id="@+id/rowQuizHistory"
+                    style="@style/Widget.Acadex.ProfileRow"
+                    android:text="@string/row_quiz_history" />
+
+                <TextView
+                    android:id="@+id/rowSettings"
+                    style="@style/Widget.Acadex.ProfileRow"
+                    android:text="@string/row_settings" />
+
+                <TextView
+                    android:id="@+id/rowAbout"
+                    style="@style/Widget.Acadex.ProfileRow"
+                    android:text="@string/row_about" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSignOut"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="@string/sign_out"
+                    android:textColor="@color/error_red"
+                    app:strokeColor="@color/error_red" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

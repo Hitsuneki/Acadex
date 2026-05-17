@@ -17,8 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/navy_primary"
-            app:title="@string/nav_upload"
-            app:titleTextColor="@color/text_primary" />
+            app:title="@string/submit_to_archive"
+            app:titleTextColor="@color/text_on_navy" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,13 +47,13 @@
                     android:textColor="@color/text_secondary" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/selectedFileName"
+            <include
+                android:id="@+id/fileIndicator"
+                layout="@layout/layout_file_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/no_file_selected"
-                android:textColor="@color/text_secondary" />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/fileError"
@@ -76,7 +76,7 @@
                     android:id="@+id/titleEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/title_hint"
+                    android:hint="@string/title_hint_upload"
                     android:inputType="text"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -94,43 +94,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:hint="@string/description_hint"
+                    android:hint="@string/description_hint_upload"
                     android:inputType="textMultiLine"
-                    android:maxLines="3" />
+                    android:minLines="3"
+                    android:scrollbars="vertical" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:id="@+id/subjectInputLayout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:hint="Subject"
+                android:hint="@string/subject_hint"
                 app:boxBackgroundColor="@color/bg_surface">
 
                 <AutoCompleteTextView
-                    android:id="@+id/subjectDropdown"
+                    android:id="@+id/subjectInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none" />
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="File Type"
-                app:boxBackgroundColor="@color/bg_surface">
-
-                <AutoCompleteTextView
-                    android:id="@+id/fileTypeDropdown"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/uploaderInputLayout"
+                android:id="@+id/tagsInputLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -138,17 +125,22 @@
                 app:boxBackgroundColor="@color/bg_surface">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/uploaderEditText"
+                    android:id="@+id/tagsEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/uploader_name_hint"
-                    android:inputType="textPersonName"
-                    android:maxLines="1" />
+                    android:hint="@string/tags_hint"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <ProgressBar
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/tagsChipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:chipSpacingHorizontal="6dp" />
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/uploadProgress"
-                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

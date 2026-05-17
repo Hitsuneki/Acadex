@@ -10,7 +10,10 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.acadex.data.repository.QuizRepository
+import kotlinx.coroutines.launch
 import androidx.navigation.fragment.navArgs
 import com.example.acadex.R
 import com.example.acadex.data.MockDataSource
@@ -147,6 +150,11 @@ class QuizTakingFragment : Fragment() {
         }
         val total = quiz.questions.size
         val percent = (correct * 100) / total
+
+        lifecycleScope.launch {
+            // Mock quizzes use local ids; Supabase history requires quiz_sets UUID rows.
+            QuizRepository.recordHistory(quizSetId = "mock-${quiz.id}", score = correct, total = total)
+        }
 
         binding.scoreText.text = getString(R.string.score_format, correct, total)
         binding.percentageText.text = "$percent%"

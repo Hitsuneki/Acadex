@@ -2,6 +2,7 @@ package com.example.acadex.ui.detail
 
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,20 +10,17 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.acadex.R
 import com.example.acadex.adapters.CommentAdapter
-import com.example.acadex.data.MockDataSource
-import com.example.acadex.data.model.Comment
+import com.example.acadex.data.ResourceRepository
 import com.example.acadex.databinding.FragmentFileDetailBinding
 import com.example.acadex.util.FileTypeUtils
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import kotlinx.coroutines.launch
 
 class FileDetailFragment : Fragment() {
 
@@ -57,21 +55,37 @@ class FileDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        bindFile()
+        viewLifecycleOwner.lifecycleScope.launch {
+            ResourceRepository.refreshFromSupabase()
+            bindFile()
+        }
     }
 
     private fun bindFile() {
-        val file = MockDataSource.getFileById(args.fileId) ?: run {
-            findNavController().navigateUp()
+        val materialId = args.materialId
+        val cached = ResourceRepository.getFileById(materialId)
+        if (cached != null) {
+            bindFileContent(cached)
             return
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val loaded = ResourceRepository.loadRemoteDetail(materialId)
+            if (loaded != null) {
+                bindFileContent(loaded)
+            } else {
+                findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun bindFileContent(file: com.example.acadex.data.model.ResourceFile) {
 
         val context = requireContext()
         binding.toolbar.title = file.title
         binding.detailTitle.text = file.title
         binding.subjectBadge.text = file.subject
         binding.uploaderDate.text = "${file.uploaderName} · ${file.uploadDate}"
-        binding.description.text = file.description.ifBlank { "No description provided." }
+        binding.description.text = file.description.ifBlank { getString(R.string.no_description) }
         binding.description.isVisible = file.description.isNotBlank()
 
         val bgColor = ContextCompat.getColor(context, FileTypeUtils.bgRes(file.fileType))
@@ -84,8 +98,11 @@ class FileDetailFragment : Fragment() {
         binding.largeFileIcon.imageTintList = ColorStateList.valueOf(fgColor)
 
         val ratingDisplay = if (file.ratingCount > 0) file.rating else 0f
-        binding.statsRow.text = "★ %.1f · %d downloads · %d comments".format(
-            ratingDisplay, file.downloadCount, file.comments.size
+        binding.statsRow.text = getString(
+            R.string.file_stats_format,
+            ratingDisplay,
+            file.downloadCount,
+            file.comments.size
         )
         binding.ratingSummary.text = getString(
             R.string.ratings_count_format,
@@ -97,22 +114,41 @@ class FileDetailFragment : Fragment() {
         updateSaveButton(file.isSaved)
 
         binding.btnDownload.setOnClickListener {
-            Snackbar.make(binding.root, R.string.download_started, Snackbar.LENGTH_SHORT).show()
+            viewLifecycleOwner.lifecycleScope.launch {
+                val urlResult = ResourceRepository.recordDownload(file)
+                val url = urlResult.getOrNull()
+                if (!url.isNullOrBlank()) {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    Snackbar.make(binding.root, R.string.download_started, Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(binding.root, R.string.download_started, Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
 
-        binding.btnPreview.setOnClickListener { showPreviewSheet() }
+        binding.btnPreview.setOnClickListener { showPreview(file.downloadUrl) }
         binding.aiStrip.setOnClickListener {
-            // TODO: integrate AI Summarizer API
             Snackbar.make(binding.root, R.string.ai_indexing_soon, Snackbar.LENGTH_SHORT).show()
         }
 
         binding.btnSave.setOnClickListener {
-            file.isSaved = !file.isSaved
-            updateSaveButton(file.isSaved)
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = ResourceRepository.toggleSaved(file)
+                if (result.isSuccess) {
+                    updateSaveButton(file.isSaved)
+                } else {
+                    Snackbar.make(binding.root, R.string.save_failed, Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
 
         binding.btnShare.setOnClickListener {
-            val shareText = "${file.title}\n${file.description}\nShared via Acadex"
+            val shareText = buildString {
+                append(file.title)
+                if (file.description.isNotBlank()) append("\n").append(file.description)
+                file.downloadUrl?.let { append("\n").append(it) }
+                append("\n").append(getString(R.string.shared_via_acadex))
+            }
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, shareText)
@@ -122,37 +158,46 @@ class FileDetailFragment : Fragment() {
 
         binding.btnSubmitRating.setOnClickListener {
             val userRating = binding.ratingBar.rating
-            if (userRating > 0f) {
-                val newCount = file.ratingCount + 1
-                file.rating = ((file.rating * file.ratingCount) + userRating) / newCount
-                file.ratingCount = newCount
-                binding.ratingSummary.text = getString(
-                    R.string.ratings_count_format,
-                    file.rating,
-                    file.ratingCount
-                )
-                binding.statsRow.text = "★ %.1f · %d downloads · %d comments".format(
-                    file.rating, file.downloadCount, file.comments.size
-                )
-                Snackbar.make(binding.root, R.string.rating_submitted, Snackbar.LENGTH_SHORT).show()
+            if (userRating <= 0f) return@setOnClickListener
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = ResourceRepository.submitRating(file, userRating)
+                if (result.isSuccess) {
+                    binding.ratingSummary.text = getString(
+                        R.string.ratings_count_format,
+                        file.rating,
+                        file.ratingCount
+                    )
+                    binding.statsRow.text = getString(
+                        R.string.file_stats_format,
+                        file.rating,
+                        file.downloadCount,
+                        file.comments.size
+                    )
+                    Snackbar.make(binding.root, R.string.rating_submitted, Snackbar.LENGTH_SHORT).show()
+                } else {
+                    Snackbar.make(binding.root, R.string.rating_failed, Snackbar.LENGTH_SHORT).show()
+                }
             }
         }
 
         binding.btnPostComment.setOnClickListener {
             val text = binding.commentInput.text?.toString()?.trim().orEmpty()
             if (text.isEmpty()) return@setOnClickListener
-            val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.US)
-            val comment = Comment(
-                commenterName = MockDataSource.profileName,
-                text = text,
-                date = dateFormat.format(Date())
-            )
-            file.comments.add(0, comment)
-            commentAdapter.submitList(file.comments.toList())
-            binding.commentInput.text?.clear()
-            binding.statsRow.text = "★ %.1f · %d downloads · %d comments".format(
-                file.rating, file.downloadCount, file.comments.size
-            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                val result = ResourceRepository.postComment(file, text)
+                if (result.isSuccess) {
+                    commentAdapter.submitList(file.comments.toList())
+                    binding.commentInput.text?.clear()
+                    binding.statsRow.text = getString(
+                        R.string.file_stats_format,
+                        file.rating,
+                        file.downloadCount,
+                        file.comments.size
+                    )
+                } else {
+                    Snackbar.make(binding.root, R.string.comment_failed, Snackbar.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -166,9 +211,12 @@ class FileDetailFragment : Fragment() {
         }
     }
 
-    private fun showPreviewSheet() {
-        // TODO: integrate PDF Viewer API
-        Snackbar.make(binding.root, R.string.preview_coming_soon, Snackbar.LENGTH_SHORT).show()
+    private fun showPreview(url: String?) {
+        if (!url.isNullOrBlank()) {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } else {
+            Snackbar.make(binding.root, R.string.preview_coming_soon, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     override fun onDestroyView() {

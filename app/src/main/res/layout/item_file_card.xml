@@ -72,6 +72,15 @@
                 android:textSize="10sp"
                 android:textStyle="bold"
                 tools:text="PDF" />
+
+            <ImageButton
+                android:id="@+id/btnCardAction"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/card_action"
+                android:visibility="gone" />
         </LinearLayout>
 
         <LinearLayout
