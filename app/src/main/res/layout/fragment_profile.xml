@@ -46,6 +46,7 @@
                 tools:text="Student" />
 
             <TextView
+                android:id="@+id/profileSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -116,5 +117,17 @@
         <TextView android:id="@+id/rowRatings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_ratings_comments" />
         <TextView android:id="@+id/rowSettings" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_settings" />
         <TextView android:id="@+id/rowAbout" style="@style/Widget.Acadex.ProfileRow" android:text="@string/row_about" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSignOut"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/sign_out"
+            app:strokeColor="@color/error_red"
+            android:textColor="@color/error_red" />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

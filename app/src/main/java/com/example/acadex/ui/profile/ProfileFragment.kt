@@ -9,7 +9,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.acadex.R
 import com.example.acadex.data.MockDataSource
 import com.example.acadex.databinding.FragmentProfileBinding
+import com.example.acadex.util.AuthSession
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfileFragment : Fragment() {
 
@@ -24,6 +26,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         refresh()
+
         binding.btnSaveName.setOnClickListener {
             val name = binding.nameEditText.text?.toString()?.trim().orEmpty()
             if (name.isNotEmpty()) {
@@ -32,6 +35,13 @@ class ProfileFragment : Fragment() {
                 Snackbar.make(binding.root, R.string.name_saved, Snackbar.LENGTH_SHORT).show()
             }
         }
+
+        binding.btnSignOut.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            Snackbar.make(binding.root, R.string.signed_out, Snackbar.LENGTH_SHORT).show()
+            // MainActivity auth listener navigates to login
+        }
+
         val stub = View.OnClickListener {
             Snackbar.make(binding.root, R.string.feature_coming_soon, Snackbar.LENGTH_SHORT).show()
         }
@@ -48,10 +58,18 @@ class ProfileFragment : Fragment() {
         binding.rowAbout.setOnClickListener(stub)
     }
 
+    override fun onResume() {
+        super.onResume()
+        AuthSession.syncProfileFromFirebase()
+        refresh()
+    }
+
     private fun refresh() {
+        val user = FirebaseAuth.getInstance().currentUser
         val name = MockDataSource.profileName
         binding.nameEditText.setText(name)
         binding.profileName.text = name
+        binding.profileSubtitle.text = user?.email ?: getString(R.string.student_tag)
         val initials = name.split(" ").mapNotNull { it.firstOrNull()?.uppercaseChar() }.take(2).joinToString("")
         binding.avatarInitials.text = initials.ifEmpty { "S" }
         binding.statUploads.text = MockDataSource.files.count { it.uploaderName == name }.toString()

@@ -2,45 +2,77 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/loginFragment">
 
-    <fragment android:id="@+id/homeFragment"
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.acadex.ui.auth.LoginFragment"
+        android:label="@string/sign_in">
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.acadex.ui.auth.RegisterFragment"
+        android:label="@string/create_account">
+        <action
+            android:id="@+id/action_register_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/homeFragment"
         android:name="com.example.acadex.ui.home.HomeFragment"
         android:label="@string/nav_home">
         <action android:id="@+id/action_home_to_fileDetail" app:destination="@id/fileDetailFragment" />
         <action android:id="@+id/action_home_to_browse" app:destination="@id/browseFragment" />
     </fragment>
 
-    <fragment android:id="@+id/browseFragment"
+    <fragment
+        android:id="@+id/browseFragment"
         android:name="com.example.acadex.ui.browse.BrowseFragment"
         android:label="@string/nav_browse">
         <argument android:name="focusSearch" app:argType="boolean" android:defaultValue="false" />
         <action android:id="@+id/action_browse_to_fileDetail" app:destination="@id/fileDetailFragment" />
     </fragment>
 
-    <fragment android:id="@+id/uploadFragment"
+    <fragment
+        android:id="@+id/uploadFragment"
         android:name="com.example.acadex.ui.upload.UploadFragment"
         android:label="@string/nav_upload" />
 
-    <fragment android:id="@+id/quizFragment"
+    <fragment
+        android:id="@+id/quizFragment"
         android:name="com.example.acadex.ui.quiz.QuizFragment"
         android:label="@string/practice_index">
         <action android:id="@+id/action_quiz_to_quizTaking" app:destination="@id/quizTakingFragment" />
     </fragment>
 
-    <fragment android:id="@+id/profileFragment"
+    <fragment
+        android:id="@+id/profileFragment"
         android:name="com.example.acadex.ui.profile.ProfileFragment"
         android:label="@string/nav_profile">
         <action android:id="@+id/action_profile_to_fileDetail" app:destination="@id/fileDetailFragment" />
     </fragment>
 
-    <fragment android:id="@+id/fileDetailFragment"
+    <fragment
+        android:id="@+id/fileDetailFragment"
         android:name="com.example.acadex.ui.detail.FileDetailFragment"
         android:label="Detail">
         <argument android:name="fileId" app:argType="integer" />
     </fragment>
 
-    <fragment android:id="@+id/quizTakingFragment"
+    <fragment
+        android:id="@+id/quizTakingFragment"
         android:name="com.example.acadex.ui.quiz.QuizTakingFragment"
         android:label="Quiz">
         <argument android:name="quizId" app:argType="integer" />
