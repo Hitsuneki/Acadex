@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.acadex.data.model.Comment
 import com.example.acadex.data.model.FileType
 import com.example.acadex.data.model.ResourceFile
+import com.example.acadex.data.repository.AiRepository
 import com.example.acadex.data.repository.MaterialRepository
 import com.example.acadex.data.repository.SavedRepository
+import com.example.acadex.data.repository.SummaryResult
 import com.example.acadex.data.result.RepoResult
 import com.example.acadex.ui.common.UiState
 import com.example.acadex.ui.saved.SavedIndexSharedViewModel
@@ -16,6 +18,7 @@ import com.example.acadex.util.FileTypeUtils
 import com.example.acadex.util.StorageUrlHelper
 import com.example.acadex.util.UserIdentity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -67,6 +70,12 @@ class FileDetailViewModel(
 
     private val _viewerState = MutableStateFlow<ViewerUiState>(ViewerUiState.Idle)
     val viewerState: StateFlow<ViewerUiState> = _viewerState.asStateFlow()
+
+    private val _summaryState = MutableStateFlow<SummaryUiState>(SummaryUiState.Idle)
+    val summaryState: StateFlow<SummaryUiState> = _summaryState.asStateFlow()
+
+    private val _summaryElapsed = MutableStateFlow(0)
+    val summaryElapsed: StateFlow<Int> = _summaryElapsed.asStateFlow()
 
     private var materialId: String = ""
     private var pdfCacheFile: File? = null
@@ -446,7 +455,56 @@ class FileDetailViewModel(
         _events.value = null
     }
 
+    /**
+     * Starts AI summarization. Reads text from the viewer state already in memory
+     * (no re-download). Drives a live elapsed-seconds timer while Gemini is working.
+     */
+    fun summarize() {
+        // Already loading — prevent duplicate requests
+        if (_summaryState.value is SummaryUiState.Loading) return
+
+        val material = _material.value ?: return
+        val currentViewerState = _viewerState.value
+
+        _summaryState.value = SummaryUiState.Loading
+        _summaryElapsed.value = 0
+
+        viewModelScope.launch {
+            // Timer coroutine — ticks every second
+            val timerJob = launch {
+                while (true) {
+                    delay(1_000)
+                    _summaryElapsed.value += 1
+                }
+            }
+
+            try {
+                val result = AiRepository.summarize(
+                    material = material,
+                    viewerState = currentViewerState,
+                    context = getApplication()
+                )
+                _summaryState.value = when (result) {
+                    is SummaryResult.Success -> SummaryUiState.Success(result.text)
+                    is SummaryResult.Error -> SummaryUiState.Error(result.message)
+                    is SummaryResult.Unsupported -> SummaryUiState.Unsupported
+                    is SummaryResult.NoText -> SummaryUiState.Error(
+                        "Could not extract text from this document."
+                    )
+                }
+            } finally {
+                timerJob.cancel()
+            }
+        }
+    }
+
+    fun resetSummary() {
+        _summaryState.value = SummaryUiState.Idle
+        _summaryElapsed.value = 0
+    }
+
     override fun onCleared() {
+        AiRepository.clearCache()
         super.onCleared()
     }
 }
@@ -472,4 +530,12 @@ sealed class ViewerUiState {
 sealed class FileDetailEvent {
     data class Snackbar(val messageRes: Int) : FileDetailEvent()
     data object CommentPosted : FileDetailEvent()
+}
+
+sealed class SummaryUiState {
+    data object Idle : SummaryUiState()
+    data object Loading : SummaryUiState()
+    data class Success(val summary: String) : SummaryUiState()
+    data class Error(val message: String) : SummaryUiState()
+    data object Unsupported : SummaryUiState()
 }

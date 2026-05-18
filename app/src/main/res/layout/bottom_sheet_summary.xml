@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/summaryBottomSheetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="32dp">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_drag_handle"
+        android:alpha="0.4" />
+
+    <!-- Header row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="8dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/summaryGeminiIcon"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_ai_star"
+            android:layout_marginEnd="10dp"
+            app:tint="?attr/colorPrimary"
+            android:contentDescription="@null" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/summaryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ai_summary_title"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/summaryMaterialName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:alpha="0.6"
+                tools:text="Operating Systems — Lecture Notes" />
+
+        </LinearLayout>
+
+        <!-- Elapsed timer badge (visible during loading) -->
+        <TextView
+            android:id="@+id/summaryTimerBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip_neutral"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="4s"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="20dp"
+        android:alpha="0.1"
+        android:background="?attr/colorOnSurface" />
+
+    <!-- LOADING STATE -->
+    <LinearLayout
+        android:id="@+id/summaryLoadingGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/summaryProgress"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:indeterminate="true"
+            app:tint="?attr/colorPrimary" />
+
+        <TextView
+            android:id="@+id/summaryLoadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/ai_summary_loading"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textAlignment="center"
+            android:alpha="0.7" />
+
+        <TextView
+            android:id="@+id/summaryTimerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            android:alpha="0.5"
+            tools:text="Analyzing… 5s" />
+
+    </LinearLayout>
+
+    <!-- SUCCESS STATE -->
+    <LinearLayout
+        android:id="@+id/summarySuccessGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="gone">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:maxHeight="380dp"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:fillViewport="false">
+
+            <TextView
+                android:id="@+id/summaryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.5"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                tools:text="## Overview\nThis document covers..." />
+
+        </ScrollView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCopySummary"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/ai_summary_copy"
+            app:icon="@drawable/ic_content_copy" />
+
+    </LinearLayout>
+
+    <!-- ERROR STATE -->
+    <LinearLayout
+        android:id="@+id/summaryErrorGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_error_outline"
+            android:alpha="0.5"
+            app:tint="?attr/colorError"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/summaryErrorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textAlignment="center"
+            android:textColor="?attr/colorError"
+            tools:text="API error. Please try again." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetrySummary"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/ai_summary_retry" />
+
+    </LinearLayout>
+
+    <!-- UNSUPPORTED STATE -->
+    <LinearLayout
+        android:id="@+id/summaryUnsupportedGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_image"
+            android:alpha="0.4"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/ai_summary_unsupported"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textAlignment="center"
+            android:alpha="0.6" />
+
+    </LinearLayout>
+
+</LinearLayout>

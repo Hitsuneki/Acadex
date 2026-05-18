@@ -154,6 +154,16 @@
     <string name="ai_summarize_sub">Generate an indexed summary of this material</string>
     <string name="coming_soon">COMING SOON</string>
     <string name="ai_indexing_soon">AI summarization coming soon.</string>
+    <string name="ai_summary_title">AI Summary</string>
+    <string name="ai_summary_loading">Reading your document…</string>
+    <string name="ai_summary_elapsed">%1$ds</string>
+    <string name="ai_summary_copy">Copy Summary</string>
+    <string name="ai_summary_copied">Summary copied to clipboard.</string>
+    <string name="ai_summary_retry">Try Again</string>
+    <string name="ai_summary_unsupported">AI summarization is not available for image files. Upload a PDF, DOCX, PPTX, or TXT file to generate a summary.</string>
+    <string name="ai_summary_no_text">Could not extract text from this document.</string>
+    <string name="ai_summary_error_generic">Summarization failed. Please check your connection and try again.</string>
+    <string name="ai_summary_no_key">Gemini API key not configured. Add GEMINI_API_KEY to local.properties.</string>
     <string name="download_started">Download started</string>
     <string name="preview_coming_soon">Document preview coming soon</string>
     <string name="save_to_index">Save to Index</string>

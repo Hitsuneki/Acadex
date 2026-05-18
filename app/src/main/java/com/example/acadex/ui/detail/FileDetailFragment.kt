@@ -61,6 +61,9 @@ class FileDetailFragment : Fragment() {
         }
     }
 
+    /** Exposed so [SummaryBottomSheet] can share the same ViewModel instance */
+    fun provideViewModel(): FileDetailViewModel = viewModel
+
     private val starViews by lazy {
         listOf(binding.star1, binding.star2, binding.star3, binding.star4, binding.star5)
     }
@@ -124,8 +127,8 @@ class FileDetailFragment : Fragment() {
 
     private fun setupActions() {
         binding.aiStrip.setOnClickListener {
-            // TODO integrate AI Summarizer API
-            Snackbar.make(binding.root, R.string.ai_indexing_soon, Snackbar.LENGTH_SHORT).show()
+            viewModel.summarize()
+            SummaryBottomSheet().show(childFragmentManager, SummaryBottomSheet.TAG)
         }
         binding.btnDownload.setOnClickListener { viewModel.startDownload() }
         binding.btnPreview.setOnClickListener {
