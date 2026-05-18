@@ -6,17 +6,35 @@
     android:background="@color/bg_white"
     android:orientation="vertical">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_white"
-        app:tabIndicatorColor="@color/navy_primary"
-        app:tabSelectedTextColor="@color/navy_primary"
-        app:tabTextColor="@color/text_secondary"
-        app:tabRippleColor="@null"
-        app:tabMode="fixed"
-        app:tabGravity="fill" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingEnd="16dp">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_white"
+            app:tabIndicatorColor="@color/navy_primary"
+            app:tabSelectedTextColor="@color/navy_primary"
+            app:tabTextColor="@color/text_secondary"
+            app:tabRippleColor="@null"
+            app:tabMode="fixed"
+            app:tabGravity="fill" />
+
+        <ImageButton
+            android:id="@+id/btn_view_mode"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="View mode"
+            android:src="@drawable/ic_view_row"
+            app:tint="@color/navy_primary" />
+    </LinearLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

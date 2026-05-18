@@ -42,6 +42,14 @@ class SavedIndexFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
         binding.emptyText.text = getString(R.string.empty_saved_index)
 
+        // When used as a top-level tab (bottom nav), the main toolbar handles
+        // the title — hide this fragment's built-in toolbar to avoid duplication.
+        val isTabDestination = findNavController().currentDestination?.id == R.id.savedIndexFragment
+                && findNavController().previousBackStackEntry?.destination?.id == null
+        if (isTabDestination || arguments?.isEmpty != false) {
+            binding.toolbar.visibility = View.GONE
+        }
+
         adapter = FileCardAdapter(
             onItemClick = { file ->
                 val gutendexId = file.remoteId?.toIntOrNull()

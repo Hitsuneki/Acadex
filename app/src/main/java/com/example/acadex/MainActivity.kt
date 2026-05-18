@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     private val authDestinations = setOf(R.id.loginFragment, R.id.registerFragment)
     private val mainTabDestinations = setOf(
-        R.id.homeFragment, R.id.browseFragment, R.id.uploadFragment, R.id.quizFragment, R.id.profileFragment
+        R.id.homeFragment, R.id.browseFragment, R.id.uploadFragment, R.id.quizFragment, R.id.savedIndexFragment
     )
 
     /**
@@ -183,6 +183,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.browseFragment -> getString(R.string.nav_browse)
                 R.id.uploadFragment -> getString(R.string.nav_upload)
                 R.id.quizFragment -> getString(R.string.nav_quizzes)
+                R.id.savedIndexFragment -> getString(R.string.nav_saved)
                 R.id.profileFragment -> getString(R.string.nav_profile)
                 R.id.editProfileFragment -> getString(R.string.edit_profile)
                 R.id.settingsFragment -> getString(R.string.row_settings)

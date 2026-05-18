@@ -207,13 +207,32 @@
                         android:layout_width="0dp"
                         android:layout_height="52dp"
                         android:layout_weight="1"
-                        android:layout_marginEnd="6dp"
+                        android:layout_marginEnd="4dp"
                         android:text="Save"
                         android:textColor="@color/navy_primary"
+                        android:textSize="12sp"
                         app:strokeColor="@color/navy_primary"
                         app:cornerRadius="12dp"
                         app:icon="@drawable/ic_bookmark_outline"
-                        app:iconTint="@color/navy_primary" />
+                        app:iconTint="@color/navy_primary"
+                        app:iconSize="18dp" />
+
+                    <!-- Download Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDownload"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="4dp"
+                        android:text="@string/download"
+                        android:textColor="@color/navy_primary"
+                        android:textSize="12sp"
+                        app:strokeColor="@color/navy_primary"
+                        app:cornerRadius="12dp"
+                        app:icon="@drawable/ic_download"
+                        app:iconTint="@color/navy_primary"
+                        app:iconSize="18dp" />
 
                     <!-- Share Button -->
                     <com.google.android.material.button.MaterialButton
@@ -222,13 +241,15 @@
                         android:layout_width="0dp"
                         android:layout_height="52dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="6dp"
+                        android:layout_marginStart="4dp"
                         android:text="Share"
                         android:textColor="@color/navy_primary"
+                        android:textSize="12sp"
                         app:strokeColor="@color/navy_primary"
                         app:cornerRadius="12dp"
                         app:icon="@android:drawable/ic_menu_share"
-                        app:iconTint="@color/navy_primary" />
+                        app:iconTint="@color/navy_primary"
+                        app:iconSize="18dp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
