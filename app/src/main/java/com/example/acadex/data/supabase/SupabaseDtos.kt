@@ -141,7 +141,9 @@ data class RatingPatch(
 @Serializable
 data class SavedMaterialRow(
     @SerialName("user_id") val userId: String,
-    @SerialName("material_id") val materialId: String
+    @SerialName("material_id") val materialId: String? = null,
+    val source: String = "upload",
+    @SerialName("gutendex_id") val gutendexId: Int? = null
 )
 
 @Serializable

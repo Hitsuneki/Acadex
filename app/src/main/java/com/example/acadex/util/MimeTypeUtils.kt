@@ -46,6 +46,7 @@ object MimeTypeUtils {
         FileType.DOC -> "DOC"
         FileType.IMAGE -> "IMG"
         FileType.QUIZ -> "QUIZ"
+        FileType.BOOK -> "BOOK"
     }
 
     fun storageFileType(fileType: FileType): String = when (fileType) {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <ImageView
+        android:id="@+id/errorIllustration"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_disconnected"
+        android:contentDescription="Error illustration" />
+
+    <TextView
+        android:id="@+id/errorMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Something went wrong. Please check your internet connection."
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/text_secondary" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRetry"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Retry"
+        android:textColor="@color/text_on_navy"
+        android:backgroundTint="@color/navy_primary" />
+</LinearLayout>

@@ -27,6 +27,16 @@
             android:paddingEnd="4dp">
 
             <ImageButton
+                android:id="@+id/btn_view_mode"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="View mode"
+                android:src="@drawable/ic_view_row"
+                android:visibility="gone"
+                app:tint="@color/text_on_navy" />
+
+            <ImageButton
                 android:id="@+id/btn_notifications"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -71,5 +81,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="Upload"
+        android:src="@drawable/ic_nav_upload"
+        app:backgroundTint="@color/accent_blue"
+        app:tint="@color/white"
+        app:elevation="8dp"
+        app:fabSize="normal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bottom_navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,9 +68,6 @@ class FileDetailViewModel(
     private val _viewerState = MutableStateFlow<ViewerUiState>(ViewerUiState.Idle)
     val viewerState: StateFlow<ViewerUiState> = _viewerState.asStateFlow()
 
-    private val _showGoogleDocsWebView = MutableStateFlow(false)
-    val showGoogleDocsWebView: StateFlow<Boolean> = _showGoogleDocsWebView.asStateFlow()
-
     private var materialId: String = ""
     private var pdfCacheFile: File? = null
 
@@ -139,8 +136,57 @@ class FileDetailViewModel(
             FileType.PDF -> loadPdf(material)
             FileType.JPEG, FileType.PNG, FileType.IMAGE -> loadImage(material)
             FileType.TXT -> loadText(material)
-            FileType.DOCX, FileType.PPTX, FileType.DOC -> loadOfficePlaceholder(material)
+            FileType.DOCX, FileType.PPTX, FileType.DOC -> loadParsedDocument(material, fileType)
             else -> loadOfficePlaceholder(material)
+        }
+    }
+
+    private suspend fun getCachedFile(material: ResourceFile, defaultExt: String = ""): RepoResult<File> = withContext(Dispatchers.IO) {
+        val ext = material.storagePath?.substringAfterLast('.', defaultExt) ?: defaultExt
+        val cacheFile = File(getApplication<Application>().cacheDir, "${material.id}.$ext")
+        if (cacheFile.exists() && cacheFile.length() > 0) {
+            return@withContext RepoResult.Success(cacheFile)
+        }
+        when (val bytesResult = MaterialRepository.downloadFile(material.storagePath, material.downloadUrl)) {
+            is RepoResult.Error -> RepoResult.Error(bytesResult.message)
+            is RepoResult.Success -> {
+                cacheFile.writeBytes(bytesResult.data)
+                RepoResult.Success(cacheFile)
+            }
+        }
+    }
+
+    private fun loadParsedDocument(material: ResourceFile, fileType: FileType) {
+        _viewerState.value = ViewerUiState.Loading
+        viewModelScope.launch {
+            when (val fileResult = getCachedFile(material, if (fileType == FileType.DOCX) "docx" else "pptx")) {
+                is RepoResult.Error -> {
+                    _viewerState.value = ViewerUiState.Error(
+                        getApplication<Application>().getString(com.example.acadex.R.string.viewer_load_failed)
+                    )
+                }
+                is RepoResult.Success -> {
+                    val file = fileResult.data
+                    if (file.length() > 20 * 1024 * 1024) { // 20MB limit
+                        _viewerState.value = ViewerUiState.Error("File too large to parse")
+                        return@launch
+                    }
+                    val parsedState = withContext(Dispatchers.IO) {
+                        try {
+                            if (fileType == FileType.DOCX || fileType == FileType.DOC) {
+                                val elements = com.example.acadex.util.ViewerParser.parseDocx(file)
+                                if (elements.isEmpty()) ViewerUiState.Error("Empty document") else ViewerUiState.Docx(elements)
+                            } else {
+                                val slides = com.example.acadex.util.ViewerParser.parsePptx(file)
+                                if (slides.isEmpty()) ViewerUiState.Error("Empty document") else ViewerUiState.Pptx(slides)
+                            }
+                        } catch (e: Exception) {
+                            ViewerUiState.Error("Parse failed: ${e.localizedMessage}")
+                        }
+                    }
+                    _viewerState.value = parsedState
+                }
+            }
         }
     }
 
@@ -175,22 +221,6 @@ class FileDetailViewModel(
         _material.value?.let { prepareViewer(it) }
     }
 
-    fun openGoogleDocsViewer() {
-        val material = _material.value ?: return
-        val url = material.downloadUrl ?: return
-        _showGoogleDocsWebView.value = true
-        _viewerState.value = ViewerUiState.GoogleDocs(StorageUrlHelper.googleDocsViewerUrl(url))
-    }
-
-    fun closeGoogleDocsViewer() {
-        _showGoogleDocsWebView.value = false
-        _material.value?.let { m ->
-            if (m.fileType == FileType.DOCX || m.fileType == FileType.PPTX || m.fileType == FileType.DOC) {
-                prepareViewer(m)
-            }
-        }
-    }
-
     private fun loadImage(material: ResourceFile) {
         _viewerState.value = ViewerUiState.Loading
         viewModelScope.launch {
@@ -216,18 +246,14 @@ class FileDetailViewModel(
     private fun loadPdf(material: ResourceFile) {
         _viewerState.value = ViewerUiState.Loading
         viewModelScope.launch {
-            when (val bytesResult = MaterialRepository.downloadFile(material.storagePath, material.downloadUrl)) {
+            when (val fileResult = getCachedFile(material, "pdf")) {
                 is RepoResult.Error -> {
                     _viewerState.value = ViewerUiState.Error(
                         getApplication<Application>().getString(com.example.acadex.R.string.viewer_load_failed)
                     )
                 }
                 is RepoResult.Success -> {
-                    val file = withContext(Dispatchers.IO) {
-                        File.createTempFile("acadex_pdf_", ".pdf", getApplication<Application>().cacheDir).apply {
-                            writeBytes(bytesResult.data)
-                        }
-                    }
+                    val file = fileResult.data
                     pdfCacheFile = file
                     val pageCount = withContext(Dispatchers.IO) {
                         runCatching {
@@ -251,18 +277,25 @@ class FileDetailViewModel(
     private fun loadText(material: ResourceFile) {
         _viewerState.value = ViewerUiState.Loading
         viewModelScope.launch {
-            when (val bytesResult = MaterialRepository.downloadFile(material.storagePath, material.downloadUrl)) {
+            when (val fileResult = getCachedFile(material, "txt")) {
                 is RepoResult.Error -> {
                     _viewerState.value = ViewerUiState.Error(
                         getApplication<Application>().getString(com.example.acadex.R.string.viewer_load_failed)
                     )
                 }
                 is RepoResult.Success -> {
-                    val max = 50 * 1024
-                    val bytes = bytesResult.data
-                    val truncated = bytes.size > max
-                    val text = String(if (truncated) bytes.copyOf(max) else bytes, Charsets.UTF_8)
-                    _viewerState.value = ViewerUiState.Text(text, truncated)
+                    val file = fileResult.data
+                    val max = 100 * 1024 // 100k characters requirement from prompt
+                    val textContent = withContext(Dispatchers.IO) {
+                        val raf = java.io.RandomAccessFile(file, "r")
+                        val bytesToRead = minOf(raf.length(), max.toLong()).toInt()
+                        val bytes = ByteArray(bytesToRead)
+                        raf.readFully(bytes)
+                        raf.close()
+                        String(bytes, Charsets.UTF_8)
+                    }
+                    val truncated = file.length() > max
+                    _viewerState.value = ViewerUiState.Text(textContent, truncated)
                 }
             }
         }
@@ -414,7 +447,6 @@ class FileDetailViewModel(
     }
 
     override fun onCleared() {
-        pdfCacheFile?.delete()
         super.onCleared()
     }
 }
@@ -426,13 +458,14 @@ sealed class ViewerUiState {
     data class Image(val url: String) : ViewerUiState()
     data class ImageFile(val cacheFile: File) : ViewerUiState()
     data class Text(val content: String, val truncated: Boolean) : ViewerUiState()
+    data class Docx(val elements: List<com.example.acadex.data.model.DocElement>) : ViewerUiState()
+    data class Pptx(val slides: List<com.example.acadex.data.model.SlideData>) : ViewerUiState()
     data class OfficePlaceholder(
         val fileName: String,
         val fileType: FileType,
         val fileSizeLabel: String,
         val publicUrl: String
     ) : ViewerUiState()
-    data class GoogleDocs(val viewerUrl: String) : ViewerUiState()
     data class Error(val message: String) : ViewerUiState()
 }
 

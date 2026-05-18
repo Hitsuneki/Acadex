@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/pdfPageCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/text_secondary"
+        tools:text="Page 1 of 5" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pdfPagesRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="480dp"
+        android:overScrollMode="never"
+        android:nestedScrollingEnabled="false" />
+</LinearLayout>

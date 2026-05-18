@@ -27,15 +27,32 @@ class MainActivity : AppCompatActivity() {
 
     private val authDestinations = setOf(R.id.loginFragment, R.id.registerFragment)
     private val mainTabDestinations = setOf(
-        R.id.homeFragment, R.id.browseFragment, R.id.uploadFragment, R.id.quizFragment
+        R.id.homeFragment, R.id.browseFragment, R.id.uploadFragment, R.id.quizFragment, R.id.profileFragment
     )
+
+    /**
+     * Tracks whether we have received at least one confirmed auth state.
+     * Firebase can briefly emit currentUser == null during token refresh,
+     * which would incorrectly pop the entire back-stack to the login screen.
+     * We only navigate to login if the FIRST fired state (or a subsequent change)
+     * explicitly confirms the user is signed out.
+     */
+    private var initialAuthCheckDone = false
 
     private val authListener = FirebaseAuth.AuthStateListener { auth ->
         if (auth.currentUser == null) {
-            navigateToLoginIfNeeded()
+            // Only force-navigate to login when we have already confirmed auth
+            // once. This prevents a transient null (token refresh) from wiping
+            // the back-stack and sending the user to the home screen.
+            if (initialAuthCheckDone) {
+                navigateToLoginIfNeeded()
+            }
+            initialAuthCheckDone = true
             binding.bottomNavigation.visibility = View.GONE
+            binding.fabUpload.visibility = View.GONE
             binding.mainToolbar.isVisible = false
         } else {
+            initialAuthCheckDone = true
             AuthSession.syncProfileFromFirebase()
             lifecycleScope.launch {
                 ProfileRepository.ensureProfileExists()
@@ -63,23 +80,20 @@ class MainActivity : AppCompatActivity() {
         }
         binding.btnMenu.setOnClickListener { showAppMenu() }
 
-        if (FirebaseAuth.getInstance().currentUser != null) {
-            AuthSession.syncProfileFromFirebase()
-            lifecycleScope.launch {
-                ProfileRepository.ensureProfileExists()
-                navigateToHomeIfNeeded()
-            }
+        binding.fabUpload.setOnClickListener {
+            navController.navigate(R.id.uploadFragment)
         }
-    }
 
-    override fun onStart() {
-        super.onStart()
+        // Register the listener once for the lifetime of the Activity.
+        // Using onCreate/onDestroy (instead of onStart/onStop) means the listener
+        // does NOT re-fire every time a dialog or bottom sheet is dismissed,
+        // preventing spurious back-stack resets.
         FirebaseAuth.getInstance().addAuthStateListener(authListener)
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
         FirebaseAuth.getInstance().removeAuthStateListener(authListener)
+        super.onDestroy()
     }
 
     private fun showAppMenu() {
@@ -158,8 +172,10 @@ class MainActivity : AppCompatActivity() {
         val signedIn = FirebaseAuth.getInstance().currentUser != null
         val showMainChrome = signedIn && destinationId !in authDestinations
         binding.mainToolbar.isVisible = destinationId in mainTabDestinations
-        binding.bottomNavigation.visibility =
-            if (destinationId in mainTabDestinations) View.VISIBLE else View.GONE
+        
+        val isTabDest = destinationId in mainTabDestinations
+        binding.bottomNavigation.visibility = if (isTabDest) View.VISIBLE else View.GONE
+        binding.fabUpload.visibility = if (isTabDest) View.VISIBLE else View.GONE
 
         if (showMainChrome) {
             binding.mainToolbar.title = when (destinationId) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_white"
@@ -10,59 +11,121 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="88dp">
+        android:paddingBottom="100dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+        <!-- ───── Header ───── -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/navy_primary"
-            app:title="@string/submit_to_archive"
-            app:titleTextColor="@color/text_on_navy" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_upload_header"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/submit_to_archive"
+                android:textColor="@color/text_primary"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/upload_subtitle"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp">
 
+            <!-- ───── File drop zone ───── -->
             <LinearLayout
                 android:id="@+id/uploadZone"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:background="@drawable/bg_upload_zone"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_upload_zone_modern"
+                android:clickable="true"
+                android:focusable="true"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:minHeight="180dp"
+                android:orientation="vertical"
+                android:paddingVertical="28dp">
 
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_upload_cloud" />
+                <FrameLayout
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@drawable/bg_upload_icon_circle">
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_upload_cloud"
+                        app:tint="@color/accent_blue" />
+                </FrameLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/tap_to_select_file"
-                    android:textColor="@color/text_secondary" />
+                    android:layout_marginTop="14dp"
+                    android:text="@string/upload_select_file"
+                    android:textColor="@color/accent_blue"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/upload_supported_types"
+                    android:textColor="@color/text_muted"
+                    android:textSize="12sp" />
             </LinearLayout>
 
+            <!-- ───── File selected indicator (hidden until file is picked) ───── -->
             <include
                 android:id="@+id/fileIndicator"
                 layout="@layout/layout_file_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/fileError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="@string/select_file_required"
                 android:textColor="@color/error_red"
                 android:textSize="12sp"
                 android:visibility="gone" />
+
+            <!-- ───── Section: Material Details ───── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="@string/upload_section_details"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/border_light" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/titleInputLayout"
@@ -70,7 +133,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:boxBackgroundColor="@color/bg_surface">
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/accent_blue"
+                app:hintTextColor="@color/accent_blue">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/titleEditText"
@@ -78,7 +146,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/title_hint_upload"
                     android:inputType="text"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -86,8 +155,13 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:boxBackgroundColor="@color/bg_surface">
+                android:layout_marginTop="14dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/accent_blue"
+                app:hintTextColor="@color/accent_blue">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/descriptionEditText"
@@ -97,7 +171,8 @@
                     android:hint="@string/description_hint_upload"
                     android:inputType="textMultiLine"
                     android:minLines="3"
-                    android:scrollbars="vertical" />
+                    android:scrollbars="vertical"
+                    android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -105,31 +180,60 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="14dp"
                 android:hint="@string/subject_hint"
-                app:boxBackgroundColor="@color/bg_surface">
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/accent_blue"
+                app:endIconMode="dropdown_menu"
+                app:hintTextColor="@color/accent_blue">
 
                 <AutoCompleteTextView
                     android:id="@+id/subjectInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- ───── Section: Tags ───── -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:text="@string/upload_section_tags"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/border_light" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tagsInputLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:boxBackgroundColor="@color/bg_surface">
+                android:layout_marginTop="16dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxStrokeColor="@color/accent_blue"
+                app:hintTextColor="@color/accent_blue">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tagsEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/tags_hint"
-                    android:inputType="text" />
+                    android:inputType="text"
+                    android:textSize="15sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.chip.ChipGroup
@@ -139,21 +243,31 @@
                 android:layout_marginTop="8dp"
                 app:chipSpacingHorizontal="6dp" />
 
+            <!-- ───── Progress + Submit ───── -->
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/uploadProgress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:indeterminate="true"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:trackCornerRadius="4dp"
+                app:indicatorColor="@color/accent_blue"
+                app:trackColor="@color/border_light" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUpload"
                 style="@style/Widget.Acadex.Button.Primary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/upload" />
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/upload"
+                android:textSize="16sp"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/ic_upload_cloud"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp" />
+
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

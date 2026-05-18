@@ -1,23 +1,19 @@
 package com.example.acadex.ui.browse
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.acadex.R
-import com.example.acadex.adapter.FileCardAdapter
-import com.example.acadex.data.SortOption
-import com.example.acadex.data.SubjectCatalog
+import com.example.acadex.adapter.ViewMode
 import com.example.acadex.databinding.FragmentBrowseBinding
-import com.example.acadex.util.SubjectChipHelper
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
 class BrowseFragment : Fragment() {
 
@@ -25,9 +21,8 @@ class BrowseFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: BrowseViewModel by viewModels()
-    private val args: BrowseFragmentArgs by navArgs()
-    private lateinit var fileAdapter: FileCardAdapter
-    private lateinit var chipHelper: SubjectChipHelper
+
+    private var btnViewMode: ImageButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,60 +36,50 @@ class BrowseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chipHelper = SubjectChipHelper(binding.subjectChipsRecycler) { subject ->
-            viewModel.setSubject(subject)
-        }
-        chipHelper.setup()
+        val adapter = BrowsePagerAdapter(this)
+        binding.viewPager.adapter = adapter
 
-        val sortOptions = resources.getStringArray(R.array.sort_options)
-        binding.sortDropdown.setAdapter(
-            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sortOptions)
-        )
-        binding.sortDropdown.setText(sortOptions[0], false)
-        binding.sortDropdown.setOnItemClickListener { _, _, position, _ ->
-            val sort = when (position) {
-                1 -> SortOption.MOST_DOWNLOADED
-                2 -> SortOption.TOP_RATED
-                else -> SortOption.NEWEST
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Archive"
+                1 -> "Books"
+                else -> ""
             }
-            viewModel.setSort(sort)
+        }.attach()
+
+        btnViewMode = requireActivity().findViewById(R.id.btn_view_mode)
+        btnViewMode?.visibility = View.VISIBLE
+        btnViewMode?.setOnClickListener {
+            viewModel.toggleViewMode()
         }
 
-        fileAdapter = FileCardAdapter(onItemClick = { file ->
-            findNavController().navigate(
-                BrowseFragmentDirections.actionBrowseToFileDetail(materialId = file.id)
-            )
-        })
-        binding.filesRecycler.layoutManager = LinearLayoutManager(requireContext())
-        binding.filesRecycler.adapter = fileAdapter
-
-        binding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.setQuery(s?.toString().orEmpty())
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.viewMode.collect { mode ->
+                val iconRes = when (mode) {
+                    ViewMode.ROW -> R.drawable.ic_view_row
+                    ViewMode.TILE -> R.drawable.ic_view_grid
+                    ViewMode.COMPACT -> R.drawable.ic_view_compact
+                }
+                btnViewMode?.setImageResource(iconRes)
             }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        viewModel.files.observe(viewLifecycleOwner) { files ->
-            chipHelper.updateSubjects(SubjectCatalog.forMaterials(files))
-            fileAdapter.submitList(files)
-            binding.emptyState.visibility = if (files.isEmpty()) View.VISIBLE else View.GONE
-            binding.filesRecycler.visibility = if (files.isEmpty()) View.GONE else View.VISIBLE
         }
-
-        if (args.focusSearch) {
-            binding.searchEditText.requestFocus()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.refresh()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        btnViewMode?.visibility = View.GONE
+        btnViewMode = null
         _binding = null
+    }
+
+    private class BrowsePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 2
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> ArchiveFragment()
+                1 -> GutendexFragment()
+                else -> throw IllegalArgumentException("Invalid position: $position")
+            }
+        }
     }
 }

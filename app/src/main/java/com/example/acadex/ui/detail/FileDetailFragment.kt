@@ -10,8 +10,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -95,7 +93,6 @@ class FileDetailFragment : Fragment() {
         binding.commentsRecycler.adapter = commentAdapter
 
         setupStars()
-        setupWebView()
         setupActions()
         observeViewModel()
 
@@ -125,21 +122,6 @@ class FileDetailFragment : Fragment() {
         }
     }
 
-    private fun setupWebView() {
-        binding.viewerWebView.settings.javaScriptEnabled = true
-        binding.viewerWebView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                binding.webViewProgress.isVisible = false
-            }
-        }
-        binding.viewerWebView.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                binding.webViewProgress.isVisible = newProgress in 0..99
-                binding.webViewProgress.progress = newProgress
-            }
-        }
-    }
-
     private fun setupActions() {
         binding.aiStrip.setOnClickListener {
             // TODO integrate AI Summarizer API
@@ -163,7 +145,6 @@ class FileDetailFragment : Fragment() {
             )
         }
         binding.btnSubmitRating.setOnClickListener { viewModel.submitRating() }
-        binding.btnOpenGoogleDocs.setOnClickListener { viewModel.openGoogleDocsViewer() }
 
         binding.commentInput.doAfterTextChanged {
             binding.btnPostComment.isEnabled = !it?.toString().orEmpty().trim().isNullOrEmpty()
@@ -314,62 +295,143 @@ class FileDetailFragment : Fragment() {
         }
     }
 
+    private var pdfView: View? = null
+    private var imageView: View? = null
+    private var txtView: View? = null
+    private var docxView: View? = null
+    private var pptxView: View? = null
+    private var docxAdapter: DocxViewerAdapter? = null
+    private var pptxAdapter: PptxViewerAdapter? = null
+
     private fun renderViewer(state: ViewerUiState) {
         binding.viewerLoading.isVisible = state is ViewerUiState.Loading
         binding.viewerError.isVisible = state is ViewerUiState.Error
-        binding.viewerPdf.isVisible = state is ViewerUiState.Pdf
-        binding.viewerImage.isVisible = state is ViewerUiState.Image || state is ViewerUiState.ImageFile
-        binding.viewerTextCard.isVisible = state is ViewerUiState.Text
-        binding.viewerOffice.isVisible = state is ViewerUiState.OfficePlaceholder
-        binding.viewerWebViewContainer.isVisible = state is ViewerUiState.GoogleDocs
+        
+        pdfView?.isVisible = false
+        imageView?.isVisible = false
+        txtView?.isVisible = false
+        docxView?.isVisible = false
+        pptxView?.isVisible = false
 
         when (state) {
             is ViewerUiState.Pdf -> {
+                if (pdfView == null) {
+                    pdfView = binding.stubViewerPdf.inflate()
+                }
+                pdfView?.isVisible = true
+                
+                val recycler = pdfView?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.pdfPagesRecycler)
+                val counter = pdfView?.findViewById<android.widget.TextView>(R.id.pdfPageCounter)
+                
                 pdfAdapter?.close()
                 pdfAdapter = PdfPageAdapter(state.cacheFile).also { adapter ->
-                    binding.pdfPagesRecycler.layoutManager = LinearLayoutManager(requireContext())
-                    binding.pdfPagesRecycler.adapter = adapter
-                    binding.pdfPagesRecycler.clearOnScrollListeners()
-                    binding.pdfPagesRecycler.addOnScrollListener(object :
-                        androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                    recycler?.layoutManager = LinearLayoutManager(requireContext())
+                    recycler?.adapter = adapter
+                    recycler?.clearOnScrollListeners()
+                    recycler?.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
                         override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
                             val lm = recyclerView.layoutManager as? LinearLayoutManager ?: return
                             val first = lm.findFirstVisibleItemPosition().coerceAtLeast(0) + 1
-                            binding.pdfPageCounter.text = getString(
-                                R.string.pdf_page_counter,
-                                first.coerceAtMost(state.pageCount),
-                                state.pageCount
-                            )
+                            counter?.text = getString(R.string.pdf_page_counter, first.coerceAtMost(state.pageCount), state.pageCount)
                         }
                     })
                 }
-                binding.pdfPageCounter.text = getString(R.string.pdf_page_counter, 1, state.pageCount)
+                counter?.text = getString(R.string.pdf_page_counter, 1, state.pageCount)
             }
             is ViewerUiState.Image -> {
-                binding.viewerImage.setImageDrawable(null)
-                Glide.with(this)
-                    .load(state.url)
-                    .fitCenter()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.bg_icon_placeholder)
-                    .error(R.drawable.bg_icon_placeholder)
-                    .into(binding.viewerImage)
+                if (imageView == null) imageView = binding.stubViewerImage.inflate()
+                imageView?.isVisible = true
+                val pv = imageView as? com.github.chrisbanes.photoview.PhotoView
+                pv?.setImageDrawable(null)
+                pv?.let {
+                    Glide.with(this).load(state.url).fitCenter().transition(DrawableTransitionOptions.withCrossFade())
+                        .placeholder(R.drawable.bg_icon_placeholder).error(R.drawable.bg_icon_placeholder).into(it)
+                }
             }
             is ViewerUiState.ImageFile -> {
-                binding.viewerImage.setImageDrawable(null)
-                Glide.with(this)
-                    .load(state.cacheFile)
-                    .fitCenter()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .placeholder(R.drawable.bg_icon_placeholder)
-                    .error(R.drawable.bg_icon_placeholder)
-                    .into(binding.viewerImage)
+                if (imageView == null) imageView = binding.stubViewerImage.inflate()
+                imageView?.isVisible = true
+                val pv = imageView as? com.github.chrisbanes.photoview.PhotoView
+                pv?.setImageDrawable(null)
+                pv?.let {
+                    Glide.with(this).load(state.cacheFile).fitCenter().transition(DrawableTransitionOptions.withCrossFade())
+                        .placeholder(R.drawable.bg_icon_placeholder).error(R.drawable.bg_icon_placeholder).into(it)
+                }
             }
             is ViewerUiState.Text -> {
-                binding.viewerText.text = state.content
-                binding.txtTruncatedNotice.isVisible = state.truncated
+                if (txtView == null) txtView = binding.stubViewerTxt.inflate()
+                txtView?.isVisible = true
+                
+                txtView?.findViewById<android.widget.TextView>(R.id.viewerText)?.text = state.content
+                txtView?.findViewById<View>(R.id.txtTruncatedNotice)?.isVisible = state.truncated
+                txtView?.findViewById<android.widget.TextView>(R.id.txtStatus)?.isVisible = false
+            }
+            is ViewerUiState.Docx -> {
+                if (docxView == null) docxView = binding.stubViewerDocx.inflate()
+                docxView?.isVisible = true
+                
+                val recycler = docxView?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.docxRecycler)
+                val status = docxView?.findViewById<android.widget.TextView>(R.id.docxStatus)
+                
+                docxAdapter = DocxViewerAdapter(state.elements).also { adapter ->
+                    recycler?.layoutManager = LinearLayoutManager(requireContext())
+                    recycler?.adapter = adapter
+                }
+                
+                var pCount = 0
+                var tCount = 0
+                var iCount = 0
+                for (e in state.elements) {
+                    when (e) {
+                        is com.example.acadex.data.model.DocElement.Paragraph -> pCount++
+                        is com.example.acadex.data.model.DocElement.TableBlock -> tCount++
+                        is com.example.acadex.data.model.DocElement.ImageBlock -> iCount++
+                        else -> Unit
+                    }
+                }
+                status?.text = "$pCount paragraphs · $tCount tables · $iCount images"
+            }
+            is ViewerUiState.Pptx -> {
+                if (pptxView == null) pptxView = binding.stubViewerPptx.inflate()
+                pptxView?.isVisible = true
+                
+                val recycler = pptxView?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.pptxRecycler)
+                val counter = pptxView?.findViewById<android.widget.TextView>(R.id.pptxSlideCounter)
+                val btnPrev = pptxView?.findViewById<View>(R.id.btnPptxPrev)
+                val btnNext = pptxView?.findViewById<View>(R.id.btnPptxNext)
+                
+                pptxAdapter = PptxViewerAdapter(state.slides).also { adapter ->
+                    val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    recycler?.layoutManager = layoutManager
+                    recycler?.adapter = adapter
+                    
+                    val snapHelper = androidx.recyclerview.widget.PagerSnapHelper()
+                    recycler?.onFlingListener = null
+                    recycler?.let { snapHelper.attachToRecyclerView(it) }
+                    
+                    recycler?.clearOnScrollListeners()
+                    recycler?.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                        override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+                            val lm = recyclerView.layoutManager as? LinearLayoutManager ?: return
+                            val first = lm.findFirstVisibleItemPosition().coerceAtLeast(0) + 1
+                            counter?.text = "Slide ${first.coerceAtMost(state.slides.size)} of ${state.slides.size}"
+                        }
+                    })
+                    
+                    btnPrev?.setOnClickListener {
+                        val current = layoutManager.findFirstVisibleItemPosition()
+                        if (current > 0) recycler?.smoothScrollToPosition(current - 1)
+                    }
+                    btnNext?.setOnClickListener {
+                        val current = layoutManager.findFirstVisibleItemPosition()
+                        if (current < state.slides.size - 1) recycler?.smoothScrollToPosition(current + 1)
+                    }
+                }
+                counter?.text = "Slide 1 of ${state.slides.size}"
             }
             is ViewerUiState.OfficePlaceholder -> {
+                // Not used anymore as we render DOCX and PPTX directly, but we can fallback if it's an unsupported DOC type.
+                binding.viewerOffice.isVisible = true
                 binding.officeFileName.text = state.fileName
                 val meta = buildString {
                     append(state.fileType.displayName())
@@ -381,10 +443,6 @@ class FileDetailFragment : Fragment() {
                 binding.officeFileMeta.text = meta
                 binding.officeIcon.setImageResource(FileTypeUtils.iconRes(state.fileType))
             }
-            is ViewerUiState.GoogleDocs -> {
-                binding.webViewProgress.isVisible = true
-                binding.viewerWebView.loadUrl(state.viewerUrl)
-            }
             else -> Unit
         }
     }
@@ -392,7 +450,13 @@ class FileDetailFragment : Fragment() {
     override fun onDestroyView() {
         pdfAdapter?.close()
         pdfAdapter = null
-        binding.viewerWebView.destroy()
+        docxAdapter = null
+        pptxAdapter = null
+        pdfView = null
+        imageView = null
+        txtView = null
+        docxView = null
+        pptxView = null
         super.onDestroyView()
         _binding = null
     }
