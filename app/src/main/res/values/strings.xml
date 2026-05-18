@@ -40,6 +40,11 @@
     <string name="sort_top_rated">Top Rated</string>
 
     <string name="submit_to_archive">Submit to Archive</string>
+    <string name="upload_subtitle">Share study materials with the Acadex community</string>
+    <string name="upload_select_file">Select a file</string>
+    <string name="upload_supported_types">PDF, DOCX, PPTX, Images, TXT</string>
+    <string name="upload_section_details">Material details</string>
+    <string name="upload_section_tags">Tags (optional)</string>
     <string name="tap_to_select_file">Tap to select a file</string>
     <string name="no_file_selected">No file selected</string>
     <string name="title_hint">Title</string>

@@ -44,9 +44,16 @@ class SavedIndexFragment : Fragment() {
 
         adapter = FileCardAdapter(
             onItemClick = { file ->
-                findNavController().navigate(
-                    SavedIndexFragmentDirections.actionSavedIndexToFileDetail(file.id)
-                )
+                val gutendexId = file.remoteId?.toIntOrNull()
+                if (gutendexId != null) {
+                    findNavController().navigate(
+                        SavedIndexFragmentDirections.actionSavedIndexToGutendexDetail(gutendexId)
+                    )
+                } else {
+                    findNavController().navigate(
+                        SavedIndexFragmentDirections.actionSavedIndexToFileDetail(file.id)
+                    )
+                }
             },
             action = FileCardAction.BOOKMARK_FILLED,
             onActionClick = { file ->

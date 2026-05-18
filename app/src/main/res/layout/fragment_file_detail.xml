@@ -133,73 +133,35 @@
                         android:text="@string/retry" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/viewerPdf"
+                <ViewStub
+                    android:id="@+id/stubViewerPdf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:layout="@layout/layout_viewer_pdf" />
 
-                    <TextView
-                        android:id="@+id/pdfPageCounter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@color/text_secondary"
-                        tools:text="Page 1 of 5" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/pdfPagesRecycler"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
-                </LinearLayout>
-
-                <com.github.chrisbanes.photoview.PhotoView
-                    android:id="@+id/viewerImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="360dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:visibility="gone" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/viewerTextCard"
+                <ViewStub
+                    android:id="@+id/stubViewerImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:cardBackgroundColor="@color/bg_surface">
+                    android:layout="@layout/layout_viewer_image" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="12dp">
+                <ViewStub
+                    android:id="@+id/stubViewerTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/layout_viewer_txt" />
 
-                        <TextView
-                            android:id="@+id/txtTruncatedNotice"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/txt_truncated_notice"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="12sp"
-                            android:visibility="gone" />
+                <ViewStub
+                    android:id="@+id/stubViewerDocx"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/layout_viewer_docx" />
 
-                        <ScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:maxHeight="320dp">
-
-                            <TextView
-                                android:id="@+id/viewerText"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="monospace"
-                                android:textIsSelectable="true"
-                                android:textSize="13sp" />
-                        </ScrollView>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                <ViewStub
+                    android:id="@+id/stubViewerPptx"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout="@layout/layout_viewer_pptx" />
 
                 <LinearLayout
                     android:id="@+id/viewerOffice"
@@ -232,35 +194,7 @@
                         android:textColor="@color/text_secondary"
                         tools:text="DOCX" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnOpenGoogleDocs"
-                        style="@style/Widget.Acadex.Button.Primary"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/open_in_google_docs" />
                 </LinearLayout>
-
-                <FrameLayout
-                    android:id="@+id/viewerWebViewContainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
-                    android:visibility="gone">
-
-                    <WebView
-                        android:id="@+id/viewerWebView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                    <ProgressBar
-                        android:id="@+id/webViewProgress"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="4dp"
-                        android:layout_gravity="top"
-                        android:max="100"
-                        android:visibility="gone" />
-                </FrameLayout>
             </FrameLayout>
 
             <!-- Stats strip -->

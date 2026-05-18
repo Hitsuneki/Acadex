@@ -9,11 +9,16 @@
         android:icon="@drawable/ic_nav_browse"
         android:title="@string/nav_browse" />
     <item
-        android:id="@+id/uploadFragment"
-        android:icon="@drawable/ic_nav_upload"
-        android:title="@string/nav_upload" />
+        android:id="@+id/placeholder"
+        android:icon="@drawable/ic_blank"
+        android:title=""
+        android:enabled="false" />
     <item
         android:id="@+id/quizFragment"
         android:icon="@drawable/ic_nav_quiz"
         android:title="@string/nav_quizzes" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="@string/nav_profile" />
 </menu>

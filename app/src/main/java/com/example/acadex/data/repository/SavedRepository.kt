@@ -4,6 +4,8 @@ import android.util.Log
 import com.example.acadex.data.model.ResourceFile
 import com.example.acadex.data.result.RepoResult
 import com.example.acadex.data.result.userMessage
+import com.example.acadex.data.model.FileType
+import com.example.acadex.data.model.GutendexBook
 import com.example.acadex.data.supabase.MaterialRow
 import com.example.acadex.data.supabase.SavedMaterialRow
 import com.example.acadex.data.supabase.SupabaseClient
@@ -13,6 +15,8 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -34,13 +38,45 @@ object SavedRepository {
 
             if (saved.isEmpty()) return@runRepo emptyList()
 
-            val ids = saved.map { it.materialId }
-            val materials = client().postgrest.from("materials").select {
-                filter { isIn("id", ids) }
-            }.decodeList<MaterialRow>()
+            val uploadRows = saved.filter { it.source == "upload" && it.materialId != null }
+            val gutendexRows = saved.filter { it.source == "gutendex" && it.gutendexId != null }
 
-            val byId = materials.associateBy { it.id }
-            saved.mapNotNull { s -> byId[s.materialId]?.toResourceFile(isSaved = true) }
+            val uploadMaterialsList = if (uploadRows.isNotEmpty()) {
+                val ids = uploadRows.map { it.materialId!! }
+                val materials = client().postgrest.from("materials").select {
+                    filter { isIn("id", ids) }
+                }.decodeList<MaterialRow>()
+                val byId = materials.associateBy { it.id }
+                uploadRows.mapNotNull { s -> byId[s.materialId]?.toResourceFile(isSaved = true) }
+            } else {
+                emptyList()
+            }
+
+            val gutendexBooksList = if (gutendexRows.isNotEmpty()) {
+                gutendexRows.map { row ->
+                    async {
+                        val result = GutendexRepository.fetchBookDetails(row.gutendexId!!)
+                        if (result is RepoResult.Success) {
+                            result.data.toResourceFile(isSaved = true)
+                        } else {
+                            null
+                        }
+                    }
+                }.awaitAll().filterNotNull()
+            } else {
+                emptyList()
+            }
+
+            val uploadMap = uploadMaterialsList.associateBy { it.id }
+            val gutendexMap = gutendexBooksList.associateBy { it.remoteId ?: "" }
+
+            saved.mapNotNull { s ->
+                if (s.source == "upload") {
+                    uploadMap[s.materialId]
+                } else {
+                    gutendexMap[s.gutendexId?.toString()]
+                }
+            }
         }
     }
 
@@ -48,7 +84,7 @@ object SavedRepository {
         val uid = UserIdentity.requireUid()
         runRepo {
             client().postgrest.from("saved_materials").insert(
-                SavedMaterialRow(userId = uid, materialId = materialId)
+                SavedMaterialRow(userId = uid, materialId = materialId, source = "upload")
             )
             Unit
         }
@@ -61,10 +97,72 @@ object SavedRepository {
                 filter {
                     eq("user_id", uid)
                     eq("material_id", materialId)
+                    eq("source", "upload")
                 }
             }
             Unit
         }
+    }
+
+    suspend fun saveBook(gutendexId: Int): RepoResult<Unit> = withContext(Dispatchers.IO) {
+        val uid = UserIdentity.requireUid()
+        runRepo {
+            client().postgrest.from("saved_materials").insert(
+                SavedMaterialRow(userId = uid, gutendexId = gutendexId, source = "gutendex", materialId = null)
+            )
+            Unit
+        }
+    }
+
+    suspend fun unsaveBook(gutendexId: Int): RepoResult<Unit> = withContext(Dispatchers.IO) {
+        val uid = UserIdentity.requireUid()
+        runRepo {
+            client().postgrest.from("saved_materials").delete {
+                filter {
+                    eq("user_id", uid)
+                    eq("gutendex_id", gutendexId)
+                    eq("source", "gutendex")
+                }
+            }
+            Unit
+        }
+    }
+
+    suspend fun isBookSaved(gutendexId: Int): Boolean = withContext(Dispatchers.IO) {
+        val uid = UserIdentity.uidOrNull() ?: return@withContext false
+        if (!SupabaseClient.isConfigured) return@withContext false
+        try {
+            val list = client().postgrest.from("saved_materials").select {
+                filter {
+                    eq("user_id", uid)
+                    eq("gutendex_id", gutendexId)
+                    eq("source", "gutendex")
+                }
+            }.decodeList<SavedMaterialRow>()
+            list.isNotEmpty()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun GutendexBook.toResourceFile(isSaved: Boolean): ResourceFile {
+        val formatUrl = getPdfUrl() ?: getHtmlUrl() ?: getTxtUrl()
+        return ResourceFile(
+            id = "gutendex_$id",
+            title = title,
+            description = authors.joinToString(", ") { it.name },
+            subject = subjects.firstOrNull() ?: "General",
+            fileType = FileType.BOOK,
+            uploaderName = "Project Gutenberg",
+            uploadDate = "Downloads: $downloadCount",
+            rating = 0f,
+            ratingCount = 0,
+            downloadCount = downloadCount,
+            isSaved = isSaved,
+            remoteId = id.toString(),
+            storagePath = null,
+            downloadUrl = formatUrl
+        )
     }
 
     suspend fun clearAll(): RepoResult<Unit> = withContext(Dispatchers.IO) {

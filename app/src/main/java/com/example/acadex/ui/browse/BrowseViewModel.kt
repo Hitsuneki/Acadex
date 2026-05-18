@@ -1,46 +1,35 @@
 package com.example.acadex.ui.browse
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.acadex.data.ResourceRepository
-import com.example.acadex.data.SortOption
-import com.example.acadex.data.model.ResourceFile
-import kotlinx.coroutines.launch
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
+import com.example.acadex.adapter.ViewMode
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class BrowseViewModel : ViewModel() {
+class BrowseViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _files = MutableLiveData<List<ResourceFile>>()
-    val files: LiveData<List<ResourceFile>> = _files
+    private val prefs = application.getSharedPreferences("acadex_prefs", Context.MODE_PRIVATE)
+    
+    private val _viewMode = MutableStateFlow(getViewModePref())
+    val viewMode: StateFlow<ViewMode> = _viewMode
 
-    private var subject = "All"
-    private var query = ""
-    private var sortBy = SortOption.NEWEST
-
-    init {
-        refresh()
-    }
-
-    fun setSubject(s: String) {
-        subject = s
-        refresh()
-    }
-
-    fun setQuery(q: String) {
-        query = q
-        refresh()
-    }
-
-    fun setSort(sort: SortOption) {
-        sortBy = sort
-        refresh()
-    }
-
-    fun refresh() {
-        viewModelScope.launch {
-            ResourceRepository.refreshFromSupabase()
-            _files.postValue(ResourceRepository.filterFiles(subject, query, sortBy))
+    private fun getViewModePref(): ViewMode {
+        val name = prefs.getString("acadex_pref_view_mode", ViewMode.ROW.name) ?: ViewMode.ROW.name
+        return try {
+            ViewMode.valueOf(name)
+        } catch (e: Exception) {
+            ViewMode.ROW
         }
+    }
+
+    fun toggleViewMode() {
+        val nextMode = when (_viewMode.value) {
+            ViewMode.ROW -> ViewMode.TILE
+            ViewMode.TILE -> ViewMode.COMPACT
+            ViewMode.COMPACT -> ViewMode.ROW
+        }
+        prefs.edit().putString("acadex_pref_view_mode", nextMode.name).apply()
+        _viewMode.value = nextMode
     }
 }

@@ -8,93 +8,182 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="72dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="8dp"
             android:paddingBottom="88dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSearch"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <!-- Good morning greeting strip (56dp) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/greetingText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Good morning, scholar"
+                    android:textAppearance="@style/TextAppearance.Acadex.Headline"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/bg_avatar" />
+            </LinearLayout>
+
+            <!-- Quick-stats strip (grid of 3 card blocks) -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/search_hint"
-                app:icon="@drawable/ic_search"
-                app:strokeColor="@color/border_light" />
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:cardBackgroundColor="@color/bg_surface"
-                app:cardCornerRadius="6dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/border_light"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="18dp">
-
-                    <TextView
-                        android:id="@+id/greetingText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Acadex.Body"
-                        android:textColor="@color/text_muted"
-                        tools:text="Good morning, Student" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/tagline"
-                        android:textAppearance="@style/TextAppearance.Acadex.Headline"
-                        android:textSize="18sp" />
-
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    app:cardBackgroundColor="@color/bg_surface"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border_light"
+                    app:strokeWidth="1dp">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:orientation="horizontal">
-
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                            <TextView android:id="@+id/statMaterials" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="6" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_materials" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-                        </LinearLayout>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginHorizontal="6dp" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                            <TextView android:id="@+id/statSubjects" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="6" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_subjects" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-                        </LinearLayout>
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical" android:padding="10dp">
-                            <TextView android:id="@+id/statQuizzes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/accent_blue" android:textAppearance="@style/TextAppearance.Acadex.Headline" tools:text="2" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/stat_quizzes" android:textAppearance="@style/TextAppearance.Acadex.Label" android:textSize="10sp" />
-                        </LinearLayout>
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+                        <TextView
+                            android:id="@+id/statMaterials"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textAppearance="@style/TextAppearance.Acadex.Headline"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="12" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Uploaded"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="4dp"
+                    app:cardBackgroundColor="@color/bg_surface"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border_light"
+                    app:strokeWidth="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+                        <TextView
+                            android:id="@+id/statSaved"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textAppearance="@style/TextAppearance.Acadex.Headline"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="8" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Saved"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    app:cardBackgroundColor="@color/bg_surface"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/border_light"
+                    app:strokeWidth="1dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="12dp">
+                        <TextView
+                            android:id="@+id/statQuizzes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/accent_blue"
+                            android:textAppearance="@style/TextAppearance.Acadex.Headline"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="4" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Quizzes"
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Continue where you left off horizontal list -->
+            <TextView
+                android:id="@+id/historyHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="16dp"
+                android:text="Continue where you left off"
+                android:textAppearance="@style/TextAppearance.Acadex.Label" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/subjectChipsRecycler"
+                android:id="@+id/historyRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
-                android:paddingHorizontal="12dp" />
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_history_card" />
 
+            <!-- Recent Uploads Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:paddingTop="8dp">
+                android:paddingTop="16dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -122,6 +211,7 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
 
+            <!-- Practice Quizzes Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -157,6 +247,7 @@
                 android:layout_marginTop="8dp"
                 app:cardBackgroundColor="@color/bg_surface"
                 app:cardCornerRadius="6dp"
+                app:cardElevation="0dp"
                 app:strokeColor="@color/border_light"
                 app:strokeWidth="1dp">
 
@@ -209,4 +300,34 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Persistent M3 SearchBar positioned at the top -->
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:hint="Search materials &amp; books…"
+        app:backgroundTint="@color/bg_surface"
+        app:strokeColor="@color/border_light"
+        app:strokeWidth="1dp" />
+
+    <!-- SearchView overlay -->
+    <com.google.android.material.search.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Search materials &amp; books…"
+        app:layout_behavior="com.google.android.material.search.SearchView$Behavior">
+
+        <!-- Search results RecyclerView inside the overlay -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchResultsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="24dp" />
+    </com.google.android.material.search.SearchView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

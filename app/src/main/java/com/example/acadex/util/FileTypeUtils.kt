@@ -32,6 +32,7 @@ object FileTypeUtils {
         "DOC", "DOCUMENT" -> FileType.DOC
         "IMAGE" -> FileType.IMAGE
         "QUIZ" -> FileType.QUIZ
+        "BOOK" -> FileType.BOOK
         else -> FileType.PDF
     }
 
@@ -41,6 +42,7 @@ object FileTypeUtils {
         FileType.DOCX, FileType.DOC, FileType.PPTX, FileType.TXT -> R.color.type_doc_bg
         FileType.JPEG, FileType.PNG, FileType.IMAGE -> R.color.type_img_bg
         FileType.QUIZ -> R.color.type_quiz_bg
+        FileType.BOOK -> R.color.type_doc_bg
     }
 
     @ColorRes
@@ -49,6 +51,7 @@ object FileTypeUtils {
         FileType.DOCX, FileType.DOC, FileType.PPTX, FileType.TXT -> R.color.type_doc_fg
         FileType.JPEG, FileType.PNG, FileType.IMAGE -> R.color.type_img_fg
         FileType.QUIZ -> R.color.type_quiz_fg
+        FileType.BOOK -> R.color.type_doc_fg
     }
 
     @DrawableRes
@@ -57,5 +60,6 @@ object FileTypeUtils {
         FileType.DOCX, FileType.DOC, FileType.PPTX, FileType.TXT -> R.drawable.ic_file_doc
         FileType.JPEG, FileType.PNG, FileType.IMAGE -> R.drawable.ic_file_image
         FileType.QUIZ -> R.drawable.ic_file_quiz
+        FileType.BOOK -> R.drawable.ic_book
     }
 }

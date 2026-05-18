@@ -33,6 +33,7 @@
         android:label="@string/nav_home">
         <action android:id="@+id/action_home_to_fileDetail" app:destination="@id/fileDetailFragment" />
         <action android:id="@+id/action_home_to_browse" app:destination="@id/browseFragment" />
+        <action android:id="@+id/action_home_to_gutendexDetail" app:destination="@id/gutendexDetailFragment" />
     </fragment>
 
     <fragment
@@ -41,6 +42,7 @@
         android:label="@string/nav_browse">
         <argument android:name="focusSearch" app:argType="boolean" android:defaultValue="false" />
         <action android:id="@+id/action_browse_to_fileDetail" app:destination="@id/fileDetailFragment" />
+        <action android:id="@+id/action_browse_to_gutendexDetail" app:destination="@id/gutendexDetailFragment" />
     </fragment>
 
     <fragment
@@ -79,6 +81,7 @@
         android:name="com.example.acadex.ui.profile.SavedIndexFragment"
         android:label="@string/row_saved_index">
         <action android:id="@+id/action_savedIndex_to_fileDetail" app:destination="@id/fileDetailFragment" />
+        <action android:id="@+id/action_savedIndex_to_gutendexDetail" app:destination="@id/gutendexDetailFragment" />
     </fragment>
 
     <fragment
@@ -108,6 +111,22 @@
         android:name="com.example.acadex.ui.detail.FileDetailFragment"
         android:label="Detail">
         <argument android:name="materialId" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gutendexDetailFragment"
+        android:name="com.example.acadex.ui.detail.GutendexDetailFragment"
+        android:label="Book Detail">
+        <argument android:name="bookId" app:argType="integer" />
+        <action android:id="@+id/action_gutendexDetail_to_bookReader" app:destination="@id/bookReaderFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/bookReaderFragment"
+        android:name="com.example.acadex.ui.reader.BookReaderFragment"
+        android:label="Book Reader">
+        <argument android:name="url" app:argType="string" />
+        <argument android:name="format" app:argType="string" />
     </fragment>
 
     <fragment
