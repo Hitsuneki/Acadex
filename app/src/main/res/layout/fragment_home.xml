@@ -6,10 +6,16 @@
     android:layout_height="match_parent"
     android:background="@color/bg_white">
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="72dp">
+        android:layout_marginTop="72dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -300,6 +306,7 @@
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Persistent M3 SearchBar positioned at the top -->
     <com.google.android.material.search.SearchBar

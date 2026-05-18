@@ -63,13 +63,18 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/filesRecycler"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="80dp"
-            tools:listitem="@layout/item_file_card" />
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/filesRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp"
+                tools:listitem="@layout/item_file_card" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!-- Shimmer loading state -->
         <com.facebook.shimmer.ShimmerFrameLayout

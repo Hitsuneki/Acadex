@@ -98,11 +98,14 @@ class ArchiveFragment : Fragment() {
             viewModel.uiState.collect { state ->
                 when (state) {
                     is ArchiveUiState.Loading -> {
-                        binding.shimmerViewContainer.visibility = View.VISIBLE
+                        if (!binding.swipeRefresh.isRefreshing) {
+                            binding.shimmerViewContainer.visibility = View.VISIBLE
+                        }
                         binding.filesRecycler.visibility = View.GONE
                         binding.emptyState.visibility = View.GONE
                     }
                     is ArchiveUiState.Success -> {
+                        binding.swipeRefresh.isRefreshing = false
                         binding.shimmerViewContainer.visibility = View.GONE
                         binding.filesRecycler.visibility = if (state.files.isEmpty()) View.GONE else View.VISIBLE
                         binding.emptyState.visibility = if (state.files.isEmpty()) View.VISIBLE else View.GONE
@@ -111,6 +114,7 @@ class ArchiveFragment : Fragment() {
                         fileAdapter.submitList(state.files)
                     }
                     is ArchiveUiState.Error -> {
+                        binding.swipeRefresh.isRefreshing = false
                         binding.shimmerViewContainer.visibility = View.GONE
                         binding.filesRecycler.visibility = View.GONE
                         binding.emptyState.visibility = View.VISIBLE
@@ -118,6 +122,10 @@ class ArchiveFragment : Fragment() {
                     }
                 }
             }
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refresh()
         }
     }
 
