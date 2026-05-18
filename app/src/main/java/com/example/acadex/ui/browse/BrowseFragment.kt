@@ -22,8 +22,6 @@ class BrowseFragment : Fragment() {
 
     private val viewModel: BrowseViewModel by viewModels()
 
-    private var btnViewMode: ImageButton? = null
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,9 +45,7 @@ class BrowseFragment : Fragment() {
             }
         }.attach()
 
-        btnViewMode = requireActivity().findViewById(R.id.btn_view_mode)
-        btnViewMode?.visibility = View.VISIBLE
-        btnViewMode?.setOnClickListener {
+        binding.btnViewMode.setOnClickListener {
             viewModel.toggleViewMode()
         }
 
@@ -60,15 +56,13 @@ class BrowseFragment : Fragment() {
                     ViewMode.TILE -> R.drawable.ic_view_grid
                     ViewMode.COMPACT -> R.drawable.ic_view_compact
                 }
-                btnViewMode?.setImageResource(iconRes)
+                binding.btnViewMode.setImageResource(iconRes)
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        btnViewMode?.visibility = View.GONE
-        btnViewMode = null
         _binding = null
     }
 

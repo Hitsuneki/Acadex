@@ -18,7 +18,9 @@
     <string name="nav_browse">Browse</string>
     <string name="nav_upload">Upload</string>
     <string name="nav_quizzes">Quizzes</string>
+    <string name="nav_saved">Saved</string>
     <string name="nav_profile">Profile</string>
+    <string name="downloading_file">Downloading file...</string>
 
     <string name="tagline">The student knowledge archive.</string>
     <string name="greeting_morning">Good morning, %1$s</string>

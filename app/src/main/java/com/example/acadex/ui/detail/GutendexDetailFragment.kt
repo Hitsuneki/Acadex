@@ -14,7 +14,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.acadex.R
 import com.example.acadex.databinding.FragmentGutendexDetailBinding
+import com.example.acadex.util.DownloadHelper
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 class GutendexDetailFragment : Fragment() {
@@ -74,20 +76,27 @@ class GutendexDetailFragment : Fragment() {
                             binding.subjectChips.addView(chip)
                         }
 
-                        val pdfUrl = book.getPdfUrl()
-                        val htmlUrl = book.getHtmlUrl()
                         val txtUrl = book.getTxtUrl()
+                        val htmlUrl = book.getHtmlUrl()
+                        val pdfUrl = book.getPdfUrl()
 
+                        // Prefer txt for native rendering, then html, then pdf
                         val (formatUrl, format) = when {
-                            pdfUrl != null -> pdfUrl to "pdf"
-                            htmlUrl != null -> htmlUrl to "html"
-                            txtUrl != null -> txtUrl to "txt"
+                            txtUrl != null && txtUrl.isNotBlank() -> txtUrl to "txt"
+                            htmlUrl != null && htmlUrl.isNotBlank() -> htmlUrl to "html"
+                            pdfUrl != null && pdfUrl.isNotBlank() -> pdfUrl to "pdf"
                             else -> null to null
                         }
 
                         if (formatUrl != null && format != null) {
                             binding.btnRead.isEnabled = true
+                            binding.btnRead.text = "Read Book"
                             binding.btnRead.setOnClickListener {
+                                // Double-check URL isn't blank before navigating (prevents Parcel NULL crash)
+                                if (formatUrl.isBlank()) {
+                                    Snackbar.make(binding.root, "No readable URL found for this book", Snackbar.LENGTH_SHORT).show()
+                                    return@setOnClickListener
+                                }
                                 findNavController().navigate(
                                     GutendexDetailFragmentDirections.actionGutendexDetailToBookReader(
                                         url = formatUrl,
@@ -98,6 +107,9 @@ class GutendexDetailFragment : Fragment() {
                         } else {
                             binding.btnRead.isEnabled = false
                             binding.btnRead.text = "No preview available"
+                            binding.btnRead.setOnClickListener {
+                                Snackbar.make(binding.root, "This book has no readable format available", Snackbar.LENGTH_SHORT).show()
+                            }
                         }
 
                         if (state.isSaved) {
@@ -109,6 +121,31 @@ class GutendexDetailFragment : Fragment() {
                         }
                         binding.btnSave.setOnClickListener {
                             viewModel.toggleSave()
+                        }
+
+                        binding.btnDownload.setOnClickListener {
+                            val epubUrl = book.formats["application/epub+zip"]
+                            val downloadUrl = pdfUrl ?: epubUrl ?: txtUrl ?: htmlUrl
+                            
+                            if (downloadUrl != null) {
+                                val extension = when {
+                                    downloadUrl == pdfUrl -> ".pdf"
+                                    downloadUrl == epubUrl -> ".epub"
+                                    downloadUrl == txtUrl -> ".txt"
+                                    else -> ".html"
+                                }
+                                val safeTitle = book.title.replace(Regex("[^a-zA-Z0-9.-]"), "_")
+                                val fileName = "${safeTitle}$extension"
+                                
+                                val downloadId = DownloadHelper.enqueueDownload(requireContext(), downloadUrl, book.title, fileName)
+                                if (downloadId != null) {
+                                    Snackbar.make(binding.root, getString(R.string.downloading_file), Snackbar.LENGTH_SHORT).show()
+                                } else {
+                                    Snackbar.make(binding.root, "Failed to start download", Snackbar.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                Snackbar.make(binding.root, "No suitable format available for download", Snackbar.LENGTH_SHORT).show()
+                            }
                         }
 
                         binding.btnShare.setOnClickListener {
