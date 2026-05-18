@@ -95,6 +95,7 @@ class HomeFragment : Fragment() {
         })
 
         viewModel.files.observe(viewLifecycleOwner) { files ->
+            binding.swipeRefresh.isRefreshing = false
             mainAdapter.submitList(files.take(5))
             historyAdapter.submitList(files.take(5))
             binding.historyHeader.visibility = if (files.isEmpty()) View.GONE else View.VISIBLE
@@ -122,6 +123,11 @@ class HomeFragment : Fragment() {
         }
         binding.quizPromoCard.setOnClickListener {
             findNavController().navigate(R.id.quizFragment)
+        }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.refresh()
+            refreshHeader()
         }
 
         refreshHeader()
