@@ -76,20 +76,27 @@ class GutendexDetailFragment : Fragment() {
                             binding.subjectChips.addView(chip)
                         }
 
-                        val pdfUrl = book.getPdfUrl()
-                        val htmlUrl = book.getHtmlUrl()
                         val txtUrl = book.getTxtUrl()
+                        val htmlUrl = book.getHtmlUrl()
+                        val pdfUrl = book.getPdfUrl()
 
+                        // Prefer txt for native rendering, then html, then pdf
                         val (formatUrl, format) = when {
-                            pdfUrl != null -> pdfUrl to "pdf"
-                            htmlUrl != null -> htmlUrl to "html"
-                            txtUrl != null -> txtUrl to "txt"
+                            txtUrl != null && txtUrl.isNotBlank() -> txtUrl to "txt"
+                            htmlUrl != null && htmlUrl.isNotBlank() -> htmlUrl to "html"
+                            pdfUrl != null && pdfUrl.isNotBlank() -> pdfUrl to "pdf"
                             else -> null to null
                         }
 
                         if (formatUrl != null && format != null) {
                             binding.btnRead.isEnabled = true
+                            binding.btnRead.text = "Read Book"
                             binding.btnRead.setOnClickListener {
+                                // Double-check URL isn't blank before navigating (prevents Parcel NULL crash)
+                                if (formatUrl.isBlank()) {
+                                    Snackbar.make(binding.root, "No readable URL found for this book", Snackbar.LENGTH_SHORT).show()
+                                    return@setOnClickListener
+                                }
                                 findNavController().navigate(
                                     GutendexDetailFragmentDirections.actionGutendexDetailToBookReader(
                                         url = formatUrl,
@@ -100,6 +107,9 @@ class GutendexDetailFragment : Fragment() {
                         } else {
                             binding.btnRead.isEnabled = false
                             binding.btnRead.text = "No preview available"
+                            binding.btnRead.setOnClickListener {
+                                Snackbar.make(binding.root, "This book has no readable format available", Snackbar.LENGTH_SHORT).show()
+                            }
                         }
 
                         if (state.isSaved) {

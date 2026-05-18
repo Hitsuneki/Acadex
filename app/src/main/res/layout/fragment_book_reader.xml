@@ -6,18 +6,46 @@
     android:layout_height="match_parent"
     android:background="@color/bg_white">
 
-    <!-- WebView for HTML format -->
-    <WebView
-        android:id="@+id/webView"
+    <!-- Top Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/navy_primary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/readerToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/text_on_navy"
+            app:titleTextColor="@color/text_on_navy"
+            app:subtitleTextColor="@color/border_light" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Reading progress bar at top (thin line) -->
+    <ProgressBar
+        android:id="@+id/readingProgress"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/bg_reading_progress"
         android:visibility="gone" />
 
-    <!-- RecyclerView for PDF format -->
+    <!-- PDF Reader (RecyclerView) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pdfRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         android:visibility="gone"
         tools:listitem="@layout/item_pdf_page" />
 
@@ -26,20 +54,38 @@
         android:id="@+id/textScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:clipToPadding="false"
+        android:fadeScrollbars="false"
+        android:paddingBottom="80dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:textAppearance="@style/TextAppearance.Acadex.Body"
-            android:textSize="15sp"
-            android:lineSpacingMultiplier="1.2"
+            android:fontFamily="serif"
+            android:lineSpacingMultiplier="1.6"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="40dp"
+            android:textColor="@color/text_primary"
+            android:textIsSelectable="true"
+            android:textSize="17sp"
             tools:text="This is a public domain book..." />
     </ScrollView>
 
-    <!-- PDF Page Counter Overlay -->
+    <!-- HTML WebView reader -->
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:visibility="gone" />
+
+    <!-- PDF Page Counter Overlay (floating pill at bottom) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/pdfPageIndicator"
         android:layout_width="wrap_content"
@@ -48,20 +94,93 @@
         android:layout_marginBottom="24dp"
         android:visibility="gone"
         app:cardBackgroundColor="@color/navy_primary"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
         app:strokeWidth="0dp">
 
         <TextView
             android:id="@+id/pdfPageCounter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
             android:textColor="@color/white"
-            android:textSize="12sp"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
             tools:text="Page 1 / 150" />
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- Text reader scroll indicator (floating pill at bottom) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/textPositionIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/navy_primary"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/textPositionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="42% read" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Font size controls (floating FAB at bottom-right) -->
+    <LinearLayout
+        android:id="@+id/fontControls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_font_controls"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="4dp"
+        android:paddingVertical="4dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/btnFontDecrease"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Decrease font"
+            android:padding="10dp"
+            android:src="@drawable/ic_font_decrease"
+            app:tint="@color/text_on_navy" />
+
+        <TextView
+            android:id="@+id/fontSizeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:textColor="@color/text_on_navy"
+            android:textSize="13sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="17" />
+
+        <ImageView
+            android:id="@+id/btnFontIncrease"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Increase font"
+            android:padding="10dp"
+            android:src="@drawable/ic_font_increase"
+            app:tint="@color/text_on_navy" />
+    </LinearLayout>
 
     <!-- Loading overlay -->
     <LinearLayout
@@ -73,16 +192,55 @@
         android:orientation="vertical">
 
         <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
         <TextView
             android:id="@+id/loadingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Loading book content…"
+            android:layout_marginTop="16dp"
+            android:text="Downloading book…"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Error state -->
+    <LinearLayout
+        android:id="@+id/readerError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_disconnected"
+            app:tint="@color/text_muted" />
+
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="Could not load this book"
+            android:textColor="@color/text_secondary"
+            android:textSize="15sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRetry"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/retry"
+            android:textColor="@color/accent_blue"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/accent_blue" />
     </LinearLayout>
 </FrameLayout>

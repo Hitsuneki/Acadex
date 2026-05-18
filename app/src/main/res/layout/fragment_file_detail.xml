@@ -297,16 +297,27 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4dp"
                         android:layout_weight="1"
-                        android:text="@string/download" />
+                        android:text="@string/download"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_download"
+                        app:iconSize="18dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnPreview"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:layout_weight="1"
-                        android:text="@string/preview" />
+                        android:text="@string/preview"
+                        android:textColor="@color/accent_blue"
+                        app:backgroundTint="@color/type_doc_bg"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/ic_nav_browse"
+                        app:iconTint="@color/accent_blue"
+                        app:iconSize="18dp"
+                        app:strokeColor="@color/accent_blue"
+                        app:strokeWidth="1dp" />
                 </LinearLayout>
 
                 <LinearLayout
